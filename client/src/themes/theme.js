@@ -2,10 +2,24 @@ import { createMuiTheme } from "@material-ui/core";
 
 export const theme = createMuiTheme({
   typography: {
-    fontFamily: '"Roboto"'
+    fontFamily: "Roboto",
+
+    // h5 used for homepage title
+    h5: {
+        fontWeight: "500",
+        fontSize: "30px"
+    }
   },
-  primary: "#f04040",
-  secondary: "#1f1f1f",
+
+  palette: {
+    primary: {
+        main:"#fc6c04",
+    },
+    secondary: {
+        main: "#1f1f1f",
+    }
+  },
+
   error: "#d8000c",
-  bgcolor: "#f6f6f6"
+  bgcolor: "#ffffff"
 });
