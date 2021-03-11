@@ -1,5 +1,4 @@
-from config import db
-
+from server.config import db
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -9,6 +8,7 @@ class Users(db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
+    eventType = db.relationship("EventTypes", backref="user")
 
     def __init__(self, name, email, username, password_hash):
         self.name = name
@@ -16,3 +16,6 @@ class Users(db.Model):
         self.username = username
         self.password_hash = password_hash
 
+    def __repr__(self):
+        return f"User - id:{self.id}, name:{self.name}, " \
+               f"email:{self.email}, username:{self.username}"
