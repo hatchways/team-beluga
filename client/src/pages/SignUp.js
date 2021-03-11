@@ -9,6 +9,9 @@ import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 
+import GoogleLogin from 'react-google-login';
+import Cookies from 'universal-cookie';
+
 import Logo from '../images/logo.png';
 
 const BootstrapInput = withStyles((theme) => ({
@@ -91,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-function Login() {
+function Signup() {
     const classes = useStyles();
     const [confirmed, setConfirmed] = React.useState(false);
     const [email, setEmail] = React.useState('');
@@ -104,10 +107,35 @@ function Login() {
         setConfirmed(true)
     }
 
+    const responseGoogle = (response) => {
+        console.log(response.tokenId);
+        let status;
+        fetch("/googlesignup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ tokenId: response.tokenId })
+        })
+            .then(res => {
+                status = res.status;
+                if (status < 500) return res.json();
+                else throw Error("Server error");
+            })
+            .then(res => {
+                if (status === 200) console.log(res.response);
+                const cookies = new Cookies();
+                cookies.set('token', res.token, { path: '/' })
+            })
+            .catch(err => {
+                console.log(err.message);
+            });
+    }
+
     return (
         <Grid container direction="column" alignItems="center">
             <Grid item>
-                <Link item href="/">
+                <Link href="/">
                     <img src={Logo} alt="calendapp" className={classes.logo} />
                 </Link>
             </Grid>
@@ -152,10 +180,18 @@ function Login() {
                                 so you can start using CalendApp right away!
                             </Typography>
                         <CardActions>
-                            <Button className={classes.btnOrange}>
-                                <svg aria-hidden="true" focusable="false" height="16" width="16" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512" class="svg-inline--fa fa-google fa-w-16 fa-5x"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" class=""></path></svg>
-                                    &nbsp;&nbsp;&nbsp;&nbsp;Sign up with Google
-                                </Button>
+                            <GoogleLogin
+                                clientId="802130452785-qc5dp590pd2qs6opc6udqa8qt6ofdihl.apps.googleusercontent.com"
+                                render={renderProps => (
+                                    <Button className={classes.btnOrange} onClick={renderProps.onClick}>
+                                        <svg aria-hidden="true" focusable="false" height="16" width="16" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512" className="svg-inline--fa fa-google fa-w-16 fa-5x"><path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z"></path></svg>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;Sign up with Google
+                                    </Button>
+                                )}
+                                buttonText="Login"
+                                onSuccess={responseGoogle}
+                            // onFailure={responseGoogle}
+                            />
                         </CardActions>
                     </CardContent>
                     <Divider light />
@@ -175,4 +211,4 @@ function Login() {
     )
 }
 
-export default Login;
+export default Signup;

@@ -1,8 +1,7 @@
 import json
 from flask import jsonify, request, Blueprint
-from config import TEAM_NAME
 ping_handler = Blueprint('ping_handler', __name__)
-
+TEAM_NAME = '1,2'
 
 @ping_handler.route('/ping', methods=['POST'])
 def ping():
