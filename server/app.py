@@ -1,5 +1,4 @@
 from flask import Flask
-from api.ping_handler import ping_handler
 from api.home_handler import home_handler
 from api.google_login_handler import google_login_handler
 from api.google_signup_handler import google_signup_handler
@@ -16,7 +15,6 @@ migrate = Migrate(app, db)
 
 
 app.register_blueprint(home_handler)
-app.register_blueprint(ping_handler)
 app.register_blueprint(google_login_handler)
 app.register_blueprint(google_signup_handler)
 
