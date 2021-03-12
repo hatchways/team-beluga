@@ -103,7 +103,6 @@ function Login() {
     }
 
     const responseGoogle = (response) => {
-        console.log(response.tokenId);
         let status;
         fetch("/googlelogin", {
             method: "POST",
@@ -118,12 +117,13 @@ function Login() {
                 else throw Error("Server error");
             })
             .then(res => {
-                if (status === 200) console.log(res.response);
+                if (status === 200) alert(res.response);
                 const cookies = new Cookies();
-                cookies.set('token', res.token, { path: '/' })
+                cookies.set('token', res.token, { path: '/', httpOnly: true })
+                if (status === 401) alert(res.response);
             })
             .catch(err => {
-                console.log(err.message);
+                alert(err.message);
             });
     }
 

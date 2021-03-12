@@ -10,7 +10,6 @@ import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
 
 import GoogleLogin from 'react-google-login';
-import Cookies from 'universal-cookie';
 
 import Logo from '../images/logo.png';
 
@@ -108,7 +107,6 @@ function Signup() {
     }
 
     const responseGoogle = (response) => {
-        console.log(response.tokenId);
         let status;
         fetch("/googlesignup", {
             method: "POST",
@@ -123,12 +121,10 @@ function Signup() {
                 else throw Error("Server error");
             })
             .then(res => {
-                if (status === 200) console.log(res.response);
-                const cookies = new Cookies();
-                cookies.set('token', res.token, { path: '/' })
+                if (status === 200) alert(res.response);
             })
             .catch(err => {
-                console.log(err.message);
+                alert(err.message);
             });
     }
 
