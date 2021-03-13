@@ -1,10 +1,10 @@
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy
 import datetime
+db = SQLAlchemy()
 
 SQLALCHEMY_DATABASE_URI = getenv('SQLALCHEMY_DATABASE_URI')
 SQLALCHEMY_TRACK_MODIFICATIONS = True
-db = SQLAlchemy()
 
 JWT_SECRET_KEY = getenv("JWT_SECRET_KEY", 'local-secret')
 JWT_TOKEN_LOCATION = ['cookies']
