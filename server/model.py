@@ -1,5 +1,6 @@
 from config import db
 
+
 class Users(db.Model):
     __tablename__ = 'users'
 
@@ -8,17 +9,20 @@ class Users(db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
-    eventType = db.relationship("EventTypes", backref="user")
+    google_id = db.Column(db.String(64), unique=True)
+    eventType = db.relationship("EventTypes", backref="users")
 
-    def __init__(self, name, email, username, password_hash):
+    def __init__(self, name, email, username, password_hash, google_id):
         self.name = name
         self.email = email
         self.username = username
         self.password_hash = password_hash
+        self.google_id = google_id
 
     def __repr__(self):
         return f"User - id:{self.id}, name:{self.name}, " \
-               f"email:{self.email}, username:{self.username}"
+               f"email:{self.email}, username:{self.username}, google_id:{self.google_id}"
+
 
 class EventTypes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,17 +30,19 @@ class EventTypes(db.Model):
     title = db.Column(db.String(64), nullable=False)
     url = db.Column(db.String(64), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
+    color = db.Column(db.String(64))
     appointment = db.relationship('Appointments', backref='eventType')
 
-    def __init__(self, user_id, title, url, duration):
+    def __init__(self, user_id, title, url, duration, color):
         self.user_id = user_id
         self.title = title
         self.url = url
         self.duration = duration
+        self.color = color
 
     def __repr__(self):
         return f"EventType - id:{self.id}, user_id:{self.user_id}, " \
-               f"title:{self.title}, url:{self.url}, duration:{self.duration}"
+               f"title:{self.title}, url:{self.url}, duration:{self.duration}, color:{self.color}"
 
 
 class Appointments(db.Model):
