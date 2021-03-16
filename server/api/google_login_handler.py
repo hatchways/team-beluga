@@ -2,7 +2,7 @@ from flask import jsonify, Blueprint, request
 from utils.auth.oauth import oauth
 import json
 from utils.auth.token_generator import token_generator
-from model import Users
+from model.model import Users
 
 google_login_handler = Blueprint('google_login_handler', __name__)
 

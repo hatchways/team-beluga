@@ -40,6 +40,10 @@ class EventTypes(db.Model):
     def __repr__(self):
         return f"EventType - id:{self.id}, user_id:{self.user_id}, " \
                f"title:{self.title}, url:{self.url}, duration:{self.duration}"
+    
+    # Change to dictionary to be returned by jsonify
+    def to_dict(self):
+        return {column.name:getattr(self,column.name) for column in self.__table__.columns}
 
 
 class Appointments(db.Model):
