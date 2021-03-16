@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Header from "./components/Header";
 import Home from "./pages/Home";
+import CalendarPage from "./pages/CalendarPage";
 
 
 import "./App.css";
@@ -19,6 +20,7 @@ function App() {
         <Route exact path={["/", "/home", "/home/:page"]} render={(props) => <Home {...props} />} />
         <Route path="/login" component={Login} />
         <Route path="/signup" component={SignUp} />
+        <Route path="/calendar" component={CalendarPage} />
       </BrowserRouter>
     </MuiThemeProvider>
   );

@@ -14,9 +14,17 @@ export const theme = createMuiTheme({
   palette: {
     primary: {
         main:"#fc6c04",
+        dark:"#c95400"
     },
     secondary: {
         main: "#1f1f1f",
+    },
+    muted: {
+        main: "rgba(16, 16, 16, 0.3)",
+    },
+    light: {
+        main: "#cfcee0",
+        light: "#ededf5"        
     }
   },
 
