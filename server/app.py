@@ -2,7 +2,7 @@ from flask import Flask
 import config
 from config import db
 from flask_migrate import Migrate
-import model
+from model import model
 from api.url_check_handler import url_check_handler
 from api.user_info_handler import user_info_handler
 
