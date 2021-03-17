@@ -12,9 +12,11 @@ class Users(db.Model):
     available_time = db.Column(db.String(64))
     google_id = db.Column(db.String(64), unique=True)
     url = db.Column(db.String(64), unique=True)
-    eventType = db.relationship("EventTypes", backref="users")
+    access_token = db.Column(db.String(512), nullable=False)
+    refresh_token = db.Column(db.String(512), nullable=False)
+    eventType = db.relationship("EventTypes", backref="user")
 
-    def __init__(self, name, email, timezone, available_day, available_time, google_id, url):
+    def __init__(self, name, email, timezone, available_day, available_time, google_id, url,access_token, refresh_token):
         self.name = name
         self.email = email
         self.timezone = timezone
@@ -22,6 +24,8 @@ class Users(db.Model):
         self.available_time = available_time
         self.google_id = google_id
         self.url = url
+        self.access_token = access_token
+        self.refresh_token = refresh_token
 
     def __repr__(self):
         return f"User - id:{self.id}, name:{self.name}, " \

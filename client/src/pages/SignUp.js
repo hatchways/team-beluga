@@ -67,13 +67,14 @@ function Signup() {
     const history = useHistory();
     const user = useContext(UserContext);
     const responseGoogle = (response) => {
+      
         let status;
         fetch("/googlesignup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ tokenId: response.tokenId })
+            body: JSON.stringify({ code: response.code })
         })
             .then(res => {
                 status = res.status;
