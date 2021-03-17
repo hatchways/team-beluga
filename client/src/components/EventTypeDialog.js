@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -14,6 +14,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import {ColorPicker} from 'material-ui-color';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormLabel from '@material-ui/core/FormLabel';
+import AddIcon from '@material-ui/icons/Add';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -48,14 +49,12 @@ export default function EventTypeDialog() {
         
     const classes = useStyles();
 
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
 
-    const [values, setValues] = React.useState({
-        title: '',
-        duration: '',
-        url: '',
-        color: ''
-    });
+    const [title, setTitle] = useState('');
+    const [duration, setDuration] = useState('');
+    const [url, setUrl] = useState('');
+    const [color, setColor] = useState('');
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -65,23 +64,32 @@ export default function EventTypeDialog() {
         setOpen(false);
     };
 
-    const handleInputChange = (prop) => (e) => {
-        setValues({ ...values, [prop]: e.target.value });
+    const handleTitleChange = (e) => {
+        setTitle(e.target.value);
+    };
+
+    const handleUrlChange = (e) => {
+        setUrl(e.target.value);
+    };
+
+    const handleDurationChange = (e) => {
+        setDuration(e.target.value);
     };
 
     const handleColorChange = (color) => {
-        setValues({ ...values, 'color': '#'+color.hex})
+        setColor('#'+color.hex)
     }
 
     return (
         <>
             <Button variant="outlined" color="primary" onClick={handleClickOpen}
                 className={classes.btn}>
-                +&nbsp;&nbsp;New event type
+                <AddIcon fontSize='small' />
+                &nbsp;&nbsp;New event type
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title"
                 className={classes.dialog}>
-                <div className={classes.sampleColor} style={{background: values.color}}></div>
+                <div className={classes.sampleColor} style={{background: color}}></div>
                 <DialogTitle id="form-dialog-title">Set New Event Type</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -93,7 +101,7 @@ export default function EventTypeDialog() {
                             label="Tag Color"
                             name='color'
                             defaultValue='#fc6c04'
-                            value={values.color}
+                            value={color}
                             onChange={color => handleColorChange(color)}
                         />
                     </FormControl>
@@ -105,8 +113,8 @@ export default function EventTypeDialog() {
                             label="Title"
                             type="text"
                             required
-                            value={values.title}
-                            onChange={handleInputChange('title')}
+                            value={title}
+                            onChange={handleTitleChange}
                         />
                     </FormControl>
                     <FormControl className={classes.formControl} fullWidth>
@@ -117,8 +125,8 @@ export default function EventTypeDialog() {
                             type="text"
                             InputProps={{ startAdornment: <InputAdornment position="start">calendapp.com/</InputAdornment> }}
                             required
-                            value={values.url}
-                            onChange={handleInputChange('url')}
+                            value={url}
+                            onChange={handleUrlChange}
                         />
                     </FormControl>                    
                     <FormControl required className={classes.formControl} fullWidth>
@@ -126,19 +134,13 @@ export default function EventTypeDialog() {
                         <Select
                             labelId="select-duration-label"
                             id="select-duration"
-                            value={values.duration}
-                            onChange={handleInputChange('duration')}
+                            value={duration}
+                            onChange={handleDurationChange}
                             className={classes.selectEmpty}
                         >
-                            <MenuItem value={5}>5mins</MenuItem>
-                            <MenuItem value={10}>10mins</MenuItem>
-                            <MenuItem value={20}>20mins</MenuItem>
+                            <MenuItem value={15}>15mins</MenuItem>
                             <MenuItem value={30}>30mins</MenuItem>
-                            <MenuItem value={45}>45mins</MenuItem>
                             <MenuItem value={60}>60mins</MenuItem>
-                            <MenuItem value={80}>80mins</MenuItem>
-                            <MenuItem value={100}>100mins</MenuItem>
-                            <MenuItem value={120}>120mins</MenuItem>
                         </Select>
                     </FormControl>
                 </DialogContent>
