@@ -107,6 +107,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CalendarPage() {
     const classes = useStyles();
+    const [minDate, setMinDate] = useState(new Date());
     // may need fetch from server with useEffect hook
     const [times, setTimes] = useState([
         '16:30',
@@ -149,7 +150,7 @@ export default function CalendarPage() {
                 </Grid>
                 <Grid item container direction="row">
                     <Grid item className={classes.colMid} sm={8}>
-                        <CalendarWidget />
+                        <CalendarWidget minDate={minDate} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
                             Coordinated Universal Time&nbsp;
                             </Typography>

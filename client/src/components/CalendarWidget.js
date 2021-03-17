@@ -76,13 +76,14 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function CalendarWidget(){
+export default function CalendarWidget(props){
     const classes = useStyles();
+    const {minDate} = props;
     return(
         <Calendar
             locale={'en'}
             className={classes.calendar}
-            minDate={new Date()}
+            minDate={props.minDate}
             maxDetail={'month'}
             minDetail={'month'}
         ></Calendar>
