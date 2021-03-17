@@ -10,18 +10,21 @@ class Users(db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     google_id = db.Column(db.String(64), unique=True)
+    url = db.Column(db.String(64), unique=True)
     eventType = db.relationship("EventTypes", backref="users")
 
-    def __init__(self, name, email, username, password_hash, google_id):
+    def __init__(self, name, email, username, password_hash, google_id, url):
         self.name = name
         self.email = email
         self.username = username
         self.password_hash = password_hash
         self.google_id = google_id
+        self.url = url
 
     def __repr__(self):
         return f"User - id:{self.id}, name:{self.name}, " \
-               f"email:{self.email}, username:{self.username}, google_id:{self.google_id}"
+               f"email:{self.email}, username:{self.username}, google_id:{self.google_id}" \
+               f"url: {self.url}"
 
 
 class EventTypes(db.Model):

@@ -1,6 +1,6 @@
 from flask import jsonify, Blueprint, request
 import json
-from model import Users
+from model.model import Users
 from config import db
 
 user_info_handler = Blueprint('user_info_handler', __name__)
