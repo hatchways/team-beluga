@@ -2,7 +2,7 @@ from flask import jsonify, Blueprint, request
 from utils.auth.oauth import oauth
 import json
 from config import db
-from model import Users
+from model.model import Users
 
 google_signup_handler = Blueprint('google_signup_handler', __name__)
 
