@@ -9,18 +9,21 @@ class Users(db.Model):
     username = db.Column(db.String(64), unique=True, index=True)
     password_hash = db.Column(db.String(128))
     google_id = db.Column(db.String(64), unique=True)
-    eventType = db.relationship("EventTypes", backref="user")
+    url = db.Column(db.String(64), unique=True)
+    eventType = db.relationship("EventTypes", backref="users")
 
-    def __init__(self, name, email, username, password_hash, google_id):
+    def __init__(self, name, email, username, password_hash, google_id, url):
         self.name = name
         self.email = email
         self.username = username
         self.password_hash = password_hash
         self.google_id = google_id
+        self.url = url
 
     def __repr__(self):
         return f"User - id:{self.id}, name:{self.name}, " \
-               f"email:{self.email}, username:{self.username}, google_id:{self.google_id}"
+               f"email:{self.email}, username:{self.username}, google_id:{self.google_id}" \
+               f"url: {self.url}"
 
 
 class EventTypes(db.Model):
@@ -29,17 +32,19 @@ class EventTypes(db.Model):
     title = db.Column(db.String(64), nullable=False)
     url = db.Column(db.String(64), nullable=False)
     duration = db.Column(db.Integer, nullable=False)
+    color = db.Column(db.String(64))
     appointment = db.relationship('Appointments', backref='eventType')
 
-    def __init__(self, user_id, title, url, duration):
+    def __init__(self, user_id, title, url, duration, color):
         self.user_id = user_id
         self.title = title
         self.url = url
         self.duration = duration
+        self.color = color
 
     def __repr__(self):
         return f"EventType - id:{self.id}, user_id:{self.user_id}, " \
-               f"title:{self.title}, url:{self.url}, duration:{self.duration}"
+               f"title:{self.title}, url:{self.url}, duration:{self.duration}, color:{self.color}"
     
     # Change to dictionary to be returned by jsonify
     def to_dict(self):
