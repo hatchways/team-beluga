@@ -30,7 +30,8 @@ def create_eventType():
         user_id = data.get("user_id"),
         title = data.get("title"),
         url = data.get("url"),
-        duration = data.get("duration")
+        duration = data.get("duration"),
+        color=data.get("color")
     )
 
     db.session.add(new_eventType)

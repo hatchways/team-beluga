@@ -78,7 +78,42 @@ export default function EventTypeDialog() {
 
     const handleColorChange = (color) => {
         setColor('#'+color.hex)
-    }
+    };
+    
+    const handleConfirm = () => {
+        if (title===''||duration===''||url===''||color==='') return alert('Missing Field(s)') //might need to change after discuss
+        else {
+            let status;
+            fetch("/event-types/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    // need to decide get 'user_id' from cookie by BE or store in state
+                    title: title,
+                    url: url,
+                    duration: duration,
+                    color: color
+                })
+            })
+                .then(res => {
+                    status = res.status;
+                    if (status < 500) return res.json();
+                    else throw Error("Server error");
+                })
+                .then(res => {
+                    if (status === 200) {
+                        alert(res.success); //might need to change after discuss
+                        setOpen(false);
+                    }
+                    else throw Error("Fail to fetch data");
+                })
+                .catch(err => {
+                    alert(err.message); //might need to change after discuss
+                });
+        }        
+    };
 
     return (
         <>
@@ -148,7 +183,7 @@ export default function EventTypeDialog() {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleConfirm} color="primary">
                         Confirm
                     </Button>
                 </DialogActions>

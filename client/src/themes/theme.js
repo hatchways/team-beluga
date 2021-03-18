@@ -24,7 +24,11 @@ export const theme = createMuiTheme({
     },
     light: {
         main: "#cfcee0",
-        light: "#ededf5"        
+        light: "#ededf5",
+        deepLight: "#f5f5fa"      
+    },
+    shadow: {
+        card: "0px 0px 15px 0px rgba(215,214,235,1)"
     }
   },
 

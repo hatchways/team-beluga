@@ -6,7 +6,8 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import EventTypesTab from '../components/EventTypesTab'
 
 // TODO: Insert event,appointment components, make responsive
 
@@ -98,7 +99,7 @@ function Home(props) {
         </Grid>
 
         <TabPanel value={value} index={0}>
-            Event page
+            <EventTypesTab />
         </TabPanel>
         <TabPanel value={value} index={1}>
             Appointment page
