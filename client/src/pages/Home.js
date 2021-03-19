@@ -6,6 +6,7 @@ import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import EventTypesTab from '../components/EventTypesTab'
 import Header from "../components/Header";
 
 // TODO: Insert event,appointment components, make responsive
@@ -46,7 +47,7 @@ function TabPanel(props) {
       hidden={value !== index}
     >
       {value === index && (
-        <Box p={3}>
+        <Box p={0}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -99,7 +100,7 @@ function Home(props) {
         </Grid>
 
         <TabPanel value={value} index={0}>
-            Event page
+            <EventTypesTab />
         </TabPanel>
         <TabPanel value={value} index={1}>
             Appointment page

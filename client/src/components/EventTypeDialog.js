@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -15,6 +15,7 @@ import {ColorPicker} from 'material-ui-color';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormLabel from '@material-ui/core/FormLabel';
 import AddIcon from '@material-ui/icons/Add';
+import { UserContext } from '../globals/UserContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -78,7 +79,42 @@ export default function EventTypeDialog() {
 
     const handleColorChange = (color) => {
         setColor('#'+color.hex)
-    }
+    };
+
+    const userId = useContext(UserContext).userId;
+
+    const handleConfirm = () => {
+        if (title===''||duration===''||url===''||color==='') return alert('Missing Field(s)'); //might need to change after discuss
+        let status;
+        fetch("/event-types/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                title: title,
+                url: url,
+                duration: duration,
+                color: color
+            })
+        })
+            .then(res => {
+                status = res.status;
+                if (status < 500) return res.json();
+                else throw Error("Server error");
+            })
+            .then(res => {
+                if (status === 200) {
+                    alert(res.success); //might need to change after discuss
+                    setOpen(false);
+                }
+                else throw Error("Fail to fetch data");
+            })
+            .catch(err => {
+                alert(err.message); //might need to change after discuss
+            });                
+    };
 
     return (
         <>
@@ -148,7 +184,7 @@ export default function EventTypeDialog() {
                     <Button onClick={handleClose} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={handleClose} color="primary">
+                    <Button onClick={handleConfirm} color="primary">
                         Confirm
                     </Button>
                 </DialogActions>
