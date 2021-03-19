@@ -19,6 +19,6 @@ def googlelogin():
             user_db = Users.query.filter_by(google_id=userid).first()
             uid = user_db.id
             token = token_generator(uid)
-            return jsonify({'response': 'Login success', 'token': token}), 200
+            return jsonify({'response': 'Login success', 'token': token, 'id': uid}), 200
         return jsonify({'response': 'Please Sign Up'}), 401
     return jsonify({'response': 'Login fail'}), 401

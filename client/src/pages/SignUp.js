@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { HeadLogo, LoginComponent, GoogleLoginBtn } from '../components/LoginComponents';
+import Cookies from 'universal-cookie';
+import { UserContext } from '../globals/UserContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -61,7 +63,9 @@ function Signup() {
     const handleGetStarted = () => {
         setConfirmed(true)
     }
-
+    
+    const history = useHistory();
+    const user = useContext(UserContext);
     const responseGoogle = (response) => {
         let status;
         fetch("/googlesignup", {
@@ -77,7 +81,16 @@ function Signup() {
                 else throw Error("Server error");
             })
             .then(res => {
-                if (status === 200) alert(res.response);
+                if (status === 200) {
+                    alert(res.response);
+                    const cookies = new Cookies();
+                    cookies.set('token', res.token, { path: '/', httpOnly: true });
+                    user.setUserId(res.id);
+                    history.push("/profile-settings");
+                } else {
+                    if (status === 401) alert(res.response);                         
+                    else throw Error("Fail to login");
+                }
             })
             .catch(err => {
                 alert(err.message);
@@ -120,7 +133,7 @@ function Signup() {
                                 so you can start using CalendApp right away!
                             </Typography>
                         <CardActions>
-                            <GoogleLoginBtn responseGoogle={responseGoogle} />
+                            <GoogleLoginBtn responseGoogle={responseGoogle} type={'Sign up'} />
                         </CardActions>
                     </CardContent>
                     <Divider light />

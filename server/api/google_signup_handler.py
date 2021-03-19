@@ -3,6 +3,7 @@ from utils.auth.oauth import oauth
 import json
 from config import db
 from model.model import Users
+from utils.auth.token_generator import token_generator
 
 google_signup_handler = Blueprint('google_signup_handler', __name__)
 
@@ -17,9 +18,11 @@ def googlesignup():
         name = user_info.get('name')
         email = user_info.get('email')
         if Users.query.filter_by(google_id=userid).first() is None:
-            user_db = Users(name=name, email=email, username=None, password_hash=None, google_id=userid)
+            user_db = Users(name=name, email=email, username=None, password_hash=None, google_id=userid, url='')
             db.session.add(user_db)
             db.session.commit()
-            return jsonify({'response': 'Signup success'}), 200
+            uid = Users.query.filter_by(google_id=userid).first().id
+            token = token_generator(uid)
+            return jsonify({'response': 'Signup success', 'token': token, 'id': uid}), 200
         return jsonify({'response': 'Please Log In'}), 401
     return jsonify({'response': 'Signup fail'}), 401

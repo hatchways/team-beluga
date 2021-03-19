@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Grid from '@material-ui/core/Grid';
+import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
 
 
 // TODO: Add correct links, load profile pic/username, fix popup menu, make responsive
@@ -22,6 +23,18 @@ const useStyles = makeStyles((theme) => ({
     links: {
         padding: "0px 20px",
     },
+
+    avatar: {
+      height: 48,
+      width: 48,
+      objectFit: 'cover',
+      borderRadius: 30,
+      marginRight: 20
+    },
+
+    name: {
+      margin: 'auto 0'
+    }
 }))
 
 const navLinks = [
@@ -64,12 +77,12 @@ return (
             ))}
           </Grid>
 
-          <Grid item container lg={2} spacing={2}>
+          <Grid item container direction="row" lg={2} spacing={0}>
             <Grid item>
-             <img src="#" onClick={handleMenu}/>
+             <img src={Avatar} onClick={handleMenu} className={classes.avatar} />
             </Grid>
 
-            <Grid item>
+            <Grid item className={classes.name}>
               <Typography variant="h6">John Doe</Typography>
               <Menu
                 id="menu-appbar"

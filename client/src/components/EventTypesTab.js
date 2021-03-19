@@ -9,7 +9,6 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import GridList from '@material-ui/core/GridList';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import AccessTimeOutlinedIcon from '@material-ui/icons/AccessTimeOutlined';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
     //tab
     tabBackgorund: {
         width: '100%',
-        background: theme.palette.light.deepLight
+        background: theme.palette.light.deepLight,
     },
     tabBody: {
         margin: '0 auto',
@@ -94,8 +93,12 @@ function EventTypeCard(props) {
     const { color, duration, title, url } = props;
     const [link, setLink] = useState(url);
     const handleCopyLink = () => {
-        navigator.clipboard.writeText('calendapp.com/userurl/'+link);//need to change 'userurl' as fetched later
-        alert('Copied: '+link)//might change later on after discuss
+        navigator.clipboard.writeText('calendapp.com/userurl/'+link)//need to change 'userurl' as fetched later
+        .then(() => {
+            alert('Copied: '+link)
+        }, () => {
+            alert('Fail to copy, Please copy manually')
+        });        
     };
     return (
         <Grid item xs={12} sm={12} md={6} lg={4}>
@@ -117,7 +120,7 @@ function EventTypeCard(props) {
                         <AccessTimeOutlinedIcon fontSize="small"
                             className={classes.icon} />
                             &nbsp;&nbsp;{duration} min
-                </Typography>
+                    </Typography>
                     <Button variant="outlined"
                         className={classes.copyLinkBtn} id={url}
                         onClick={handleCopyLink}>
