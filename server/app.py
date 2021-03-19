@@ -8,7 +8,6 @@ from model.model import Users,EventTypes,Appointments
 from api.google_login_handler import google_login_handler
 from api.google_signup_handler import google_signup_handler
 from api.eventType_handler import eventType_handler
-from api.email_handler import email_handler
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -20,4 +19,3 @@ app.register_blueprint(user_info_handler)
 app.register_blueprint(google_login_handler)
 app.register_blueprint(google_signup_handler)
 app.register_blueprint(eventType_handler,url_prefix='/event-types')
-app.register_blueprint(email_handler)
