@@ -34,9 +34,9 @@ function ProfileSetting() {
 
                 <Grid item xs={8}>
                     <TextField
-                        startAdornment = {
-                            <InputAdornment position="start">calendapp.com/</InputAdornment>
-                        }
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">calendapp.com/</InputAdornment>,
+                        }}
                         variant="outlined"
                         fullWidth={true}
                         // TODO: To be updated
