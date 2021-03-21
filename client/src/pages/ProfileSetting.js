@@ -25,8 +25,14 @@ function ProfileSetting() {
         setTimezone(event.target.value)
     }
 
+    const [url, setUrl] = React.useState("");
+
+    const handleUrlChange = (e) => {
+        setUrl(e.target.value)
+    }
+
     return (
-        <Onboarding title="Welcome to CalendApp!" activeStep={1} path={path}>
+        <Onboarding title="Welcome to CalendApp!" activeStep={1} path={path} url={url}>
             <Grid container item xs={12} justify="flex-start" alignItems="center">
                 <Grid item xs={4}>
                     <Typography variant="subtitle2">Create your CalendApp URL:</Typography>
@@ -40,9 +46,11 @@ function ProfileSetting() {
                         variant="outlined"
                         fullWidth={true}
                         // TODO: To be updated
-                        defaultValue="John-Doe"
+                        placeholder="John-Doe"
                         color="secondary"
                         type="text"
+                        value={url}
+                        onChange={handleUrlChange}
                     />
                 </Grid>
             </Grid>
