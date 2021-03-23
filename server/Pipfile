@@ -16,6 +16,7 @@ google-auth = "*"
 requests = "*"
 python-dotenv = "*"
 sendgrid = "*"
+stripe = "*"
 
 [requires]
 python_version = "3.7"
