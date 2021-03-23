@@ -1,4 +1,4 @@
-import React, { useContext, createContext } from "react";
+import React from "react";
 import { MuiThemeProvider } from "@material-ui/core";
 import { BrowserRouter, Route} from "react-router-dom";
 import { theme } from "./themes/theme";
@@ -9,20 +9,26 @@ import CalendarPage from "./pages/CalendarPage";
 import { UserContextProvider } from "./globals/UserContext";
 import StripeCheckout from "./pages/StripeCheckout";
 import Onboarding from "./pages/Onboarding";
+import { AlertContextProvider } from "./globals/AlertContext";
+import FlashAlert from './components/FlashAlert'
 import "./App.css";
 
 function App() {
+  
   return (
     <MuiThemeProvider theme={theme}>
       <UserContextProvider>
-        <BrowserRouter>
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={SignUp} />
-          <Route path="/calendar" component={CalendarPage} />
-          <Route exact path={["/", "/home", "/home/:page"]} component={Home} />
-          <Route exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
-          <Route exact path="/checkout" component={StripeCheckout} />
-        </BrowserRouter>
+        <AlertContextProvider>
+          <BrowserRouter>
+            <FlashAlert />
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={SignUp} />
+            <Route path="/calendar" component={CalendarPage} />
+            <Route exact path={["/", "/home", "/home/:page"]} component={Home} />
+            <Route exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
+            <Route exact path="/checkout" component={StripeCheckout} />
+          </BrowserRouter>
+        </AlertContextProvider>
       </UserContextProvider>
     </MuiThemeProvider>
   );

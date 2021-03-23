@@ -9,6 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import Cookies from 'universal-cookie';
 import {HeadLogo, LoginComponent, GoogleLoginBtn} from '../components/LoginComponents';
 import { UserContext } from '../globals/UserContext';
+import { AlertContext } from '../globals/AlertContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -41,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
+
 function Login() {
     const classes = useStyles();
     const [confirmed, setConfirmed] = useState(false);
@@ -61,6 +63,8 @@ function Login() {
 
     const history = useHistory();
     const user = useContext(UserContext);
+    const alertContext = useContext(AlertContext)
+
     const responseGoogle = (response) => {
         let status;
         fetch("/googlelogin", {
@@ -80,7 +84,11 @@ function Login() {
             })
             .then(res => {
                 if (status === 200) {
-                    alert(res.response);
+                    alertContext.setAlertStatus({
+                        isOpen:true,
+                        message:res.response,
+                        type:"success"
+                      })
                     user.setUserId(res.id);
                     
                     if (res.user_url.length === 0 || res.user_timezone.length === 0)
@@ -89,13 +97,22 @@ function Login() {
                         history.push("/onboarding/availability")
                     else
                         history.push("/home");
-                } else{
-                    if (status === 401) alert(res.response);                         
-                    else throw Error("Fail to login");
-                }                
+                } 
+                else if (status === 401){
+                    alertContext.setAlertStatus({
+                        isOpen:true,
+                        message:res.response,
+                        type:"error"
+                        })                     
+                }
+                else throw Error("Server error")               
             })
             .catch(err => {
-                alert(err.message);
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                })   
             });
     }
 

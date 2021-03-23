@@ -9,6 +9,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { HeadLogo, LoginComponent, GoogleLoginBtn } from '../components/LoginComponents';
 import Cookies from 'universal-cookie';
 import { UserContext } from '../globals/UserContext';
+import { AlertContext } from '../globals/AlertContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -66,6 +67,9 @@ function Signup() {
     
     const history = useHistory();
     const user = useContext(UserContext);
+
+    const alertContext = useContext(AlertContext)
+
     const responseGoogle = (response) => {
       
         let status;
@@ -84,21 +88,38 @@ function Signup() {
             })
             .then(res => {
                 if (status === 200) {
-                    alert(res.response);
+                    alertContext.setAlertStatus({
+                        isOpen:true,
+                        message:res.response,
+                        type:"success"
+                      })
                     user.setUserId(res.id);
                     history.push("/onboarding/profile-settings");
                 } else {
-                    if (status === 401) 
-                        alert(res.response); 
+                    if (status === 401) {
+                        alertContext.setAlertStatus({
+                            isOpen:true,
+                            message:res.response,
+                            type:"error"
+                          })
+                    }
                     else if (status === 409) {
                         history.push("/login");
-                        alert(res.response)
+                        alertContext.setAlertStatus({
+                            isOpen:true,
+                            message:res.response,
+                            type:"error"
+                          })
                     }                        
                     else throw Error("Fail to login");
                 }
             })
             .catch(err => {
-                alert(err.message);
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                  })
             });
     }
 
