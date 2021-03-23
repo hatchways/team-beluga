@@ -141,7 +141,8 @@ export default function EventTypesTab() {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include",
         })
             .then(res => {
                 status = res.status;

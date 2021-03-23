@@ -33,6 +33,10 @@ class Users(db.Model):
                f"available_day:{self.available_day}, available_time:{self.available_time}, " \
                f"google_id:{self.google_id}, url: {self.url}"
 
+    # Change to dictionary to be returned by jsonify
+    def to_dict(self):
+        return {column.name:getattr(self,column.name) for column in self.__table__.columns}
+
 
 class EventTypes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
