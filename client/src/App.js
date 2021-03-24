@@ -7,9 +7,10 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import CalendarPage from "./pages/CalendarPage";
 import { UserContextProvider } from "./globals/UserContext";
-import ProfileSetting from "./pages/ProfileSetting"
-import CalendarConfirm from "./pages/CalendarConfirm"
-import UserAvailability from "./pages/UserAvailability"
+import ProfileSetting from "./pages/ProfileSetting";
+import CalendarConfirm from "./pages/CalendarConfirm";
+import UserAvailability from "./pages/UserAvailability";
+import StripeCheckout from "./pages/StripeCheckout";
 import "./App.css";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route exact path="/profile-settings" component={ProfileSetting} />
           <Route exact path="/calendar-confirm" component={CalendarConfirm} />
           <Route exact path="/availability" component={UserAvailability} />
+          <Route exact path="/checkout" component={StripeCheckout} />
         </BrowserRouter>
       </UserContextProvider>
     </MuiThemeProvider>
