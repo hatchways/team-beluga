@@ -7,9 +7,10 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import CalendarPage from "./pages/CalendarPage";
 import { UserContextProvider } from "./globals/UserContext";
-import ProfileSetting from "./pages/ProfileSetting"
-import CalendarConfirm from "./pages/CalendarConfirm"
-import UserAvailability from "./pages/UserAvailability"
+import ProfileSetting from "./pages/ProfileSetting";
+import CalendarConfirm from "./pages/CalendarConfirm";
+import UserAvailability from "./pages/UserAvailability";
+import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
 
 function App() {
@@ -20,10 +21,10 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/signup" component={SignUp} />
           <Route path="/calendar" component={CalendarPage} />
-          <Route exact path={["/", "/home", "/home/:page"]} component={Home} />
-          <Route exact path="/profile-settings" component={ProfileSetting} />
-          <Route exact path="/calendar-confirm" component={CalendarConfirm} />
-          <Route exact path="/availability" component={UserAvailability} />
+          <PrivateRoute exact path={["/", "/home", "/home/:page"]} component={Home} />
+          <PrivateRoute exact path="/profile-settings" component={ProfileSetting} />
+          <PrivateRoute exact path="/calendar-confirm" component={CalendarConfirm} />
+          <PrivateRoute exact path="/availability" component={UserAvailability} />
         </BrowserRouter>
       </UserContextProvider>
     </MuiThemeProvider>
