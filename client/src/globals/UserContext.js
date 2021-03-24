@@ -9,7 +9,6 @@ export const UserContextProvider = (props) => {
     const [userId, setUserId] = useState("");
     const value = { userId, setUserId };
     useEffect(() => {
-        let status;
         fetch("/getcookie", {
             method: "GET",
             headers: {
@@ -17,7 +16,7 @@ export const UserContextProvider = (props) => {
             }
         })
             .then(res => {
-                if (status === 200 && res.success === 'true') return setUserId(res.userId);
+                if (res.status === 200 && res.success === true) return setUserId(res.userId);
                 else throw Error("error");
             })
             .catch(err => {
