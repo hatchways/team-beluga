@@ -9,3 +9,12 @@ def token_generator(userid):
     }
     token = jwt.encode(payload=login_payload, key=JWT_SECRET_KEY, algorithm='HS256')
     return token
+
+
+def token_decoder(token):
+    try:
+        decoded_token = jwt.decode(token, key=JWT_SECRET_KEY, algorithms=['HS256'])
+        if decoded_token.get('user_id') is not None:
+            return {'success': True, 'user_id': decoded_token['user_id']}
+    except:
+        return {'success': False}
