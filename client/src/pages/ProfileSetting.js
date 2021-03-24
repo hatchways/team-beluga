@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Onboarding from "../components/Onboarding";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
@@ -19,13 +19,13 @@ const path = "/calendar-confirm"
 
 function ProfileSetting() {
 
-    const [timezone,setTimezone] = React.useState(moment.tz.guess())
+    const [timezone,setTimezone] = useState(moment.tz.guess())
 
     const handleChange = (event)=>{
         setTimezone(event.target.value)
     }
 
-    const [url, setUrl] = React.useState("");
+    const [url, setUrl] = useState("");
 
     const handleUrlChange = (e) => {
         setUrl(e.target.value)

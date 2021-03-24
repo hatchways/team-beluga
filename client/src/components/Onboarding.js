@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import MobileStepper from '@material-ui/core/MobileStepper';
@@ -74,13 +74,13 @@ function Onboarding({children,title,activeStep,path,url}) {
     
     const history = useHistory();
 
-    const [urlStore, setUrlStore] = React.useState("");
+    const [urlStore, setUrlStore] = useState("");
 
     const handleContinueClick = () => {
         let status;
         if (activeStep === 1){
             if (url === "") return alert('empty url');
-            fetch("/user/"+url+"/event-type", {
+            fetch(`/user/${url}/event-type`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json"
@@ -93,7 +93,7 @@ function Onboarding({children,title,activeStep,path,url}) {
                 })
                 .then(res => {
                     if (status === 200) {
-                        if (res.unique === "true") {
+                        if (res.unique === true) {
                             setUrlStore(url);
                             return history.push(path);
                         };
