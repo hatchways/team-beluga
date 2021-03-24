@@ -19,7 +19,6 @@ function stripeCheckoutHandler(result) {
             // Handle server response (see Step 4)
             result.json().then(function (json) {
                 //handleServerResponse(json);
-                console.log(json);
             })
         });
     }
@@ -51,8 +50,6 @@ export default function CheckoutForm() {
                 email: email
             },
         });
-        console.log(result);
-        //stripePaymentMethodHandler(result);
         stripeCheckoutHandler(result);
     };
 

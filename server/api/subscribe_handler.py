@@ -36,6 +36,6 @@ def create_subscription():
                 {"price": data['priceId']},
             ],
         )
-        return jsonify({'success': 'true'}), 200
+        return jsonify({'success': True}), 200
     except:
-        return jsonify({'success': 'false'}), 200
+        return jsonify({'success': False}), 200
