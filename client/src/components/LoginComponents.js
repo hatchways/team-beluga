@@ -114,7 +114,12 @@ function GoogleLoginBtn(props) {
             )}
             buttonText="Login"
             onSuccess={props.responseGoogle}
-        // onFailure={responseGoogle}
+            // onFailure={props.responseGoogle}
+            // Matches scope of backend
+            scope="https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/calendar"
+            responseType="code"
+            prompt='consent'
+            accessType='offline'
         />
     )
 }

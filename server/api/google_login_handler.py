@@ -1,5 +1,5 @@
 from flask import jsonify, Blueprint, request
-from utils.auth.oauth import oauth
+from utils.auth.google_client import GoogleClient
 import json
 from utils.auth.token_generator import token_generator
 from model.model import Users
@@ -9,8 +9,9 @@ google_login_handler = Blueprint('google_login_handler', __name__)
 
 @google_login_handler.route('/googlelogin', methods=['POST'])
 def googlelogin():
-    token_id = json.loads(request.get_data())['tokenId']
-    user_info = oauth(token_id)
+    code = json.loads(request.get_data())['code']
+    google_client = GoogleClient(google_auth_code = code)
+    user_info = google_client.get_user_info()
 
     if user_info['status']:
         userid = user_info.get('userid')

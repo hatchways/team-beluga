@@ -68,7 +68,7 @@ function Login() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ tokenId: response.tokenId })
+            body: JSON.stringify({ code: response.code })
         })
             .then(res => {
                 status = res.status;
