@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Onboarding from "../components/Onboarding";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
@@ -19,14 +19,20 @@ const path = "/calendar-confirm"
 
 function ProfileSetting() {
 
-    const [timezone,setTimezone] = React.useState(moment.tz.guess())
+    const [timezone,setTimezone] = useState(moment.tz.guess())
 
     const handleChange = (event)=>{
         setTimezone(event.target.value)
     }
 
+    const [url, setUrl] = useState("");
+
+    const handleUrlChange = (e) => {
+        setUrl(e.target.value)
+    }
+
     return (
-        <Onboarding title="Welcome to CalendApp!" activeStep={1} path={path}>
+        <Onboarding title="Welcome to CalendApp!" activeStep={1} path={path} url={url}>
             <Grid container item xs={12} justify="flex-start" alignItems="center">
                 <Grid item xs={4}>
                     <Typography variant="subtitle2">Create your CalendApp URL:</Typography>
@@ -34,15 +40,17 @@ function ProfileSetting() {
 
                 <Grid item xs={8}>
                     <TextField
-                        startAdornment = {
-                            <InputAdornment position="start">calendapp.com/</InputAdornment>
-                        }
+                        InputProps={{
+                            startAdornment: <InputAdornment position="start">calendapp.com/</InputAdornment>,
+                        }}
                         variant="outlined"
                         fullWidth={true}
                         // TODO: To be updated
-                        defaultValue="John-Doe"
+                        placeholder="John-Doe"
                         color="secondary"
                         type="text"
+                        value={url}
+                        onChange={handleUrlChange}
                     />
                 </Grid>
             </Grid>

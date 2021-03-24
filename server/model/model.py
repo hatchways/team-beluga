@@ -7,24 +7,27 @@ class Users(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     email = db.Column(db.String(64), unique=True, index=True)
-    username = db.Column(db.String(64), unique=True, index=True)
-    password_hash = db.Column(db.String(128))
+    timezone = db.Column(db.String(64))
+    available_day = db.Column(db.String(64))
+    available_time = db.Column(db.String(64))
     google_id = db.Column(db.String(64), unique=True)
     url = db.Column(db.String(64), unique=True)
     eventType = db.relationship("EventTypes", backref="users")
 
-    def __init__(self, name, email, username, password_hash, google_id, url):
+    def __init__(self, name, email, timezone, available_day, available_time, google_id, url):
         self.name = name
         self.email = email
-        self.username = username
-        self.password_hash = password_hash
+        self.timezone = timezone
+        self.available_day = available_day
+        self.available_time = available_time
         self.google_id = google_id
         self.url = url
 
     def __repr__(self):
         return f"User - id:{self.id}, name:{self.name}, " \
-               f"email:{self.email}, username:{self.username}, google_id:{self.google_id}" \
-               f"url: {self.url}"
+               f"email:{self.email}, timezone:{self.timezone}, " \
+               f"available_day:{self.available_day}, available_time:{self.available_time}, " \
+               f"google_id:{self.google_id}, url: {self.url}"
 
 
 class EventTypes(db.Model):

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import MobileStepper from '@material-ui/core/MobileStepper';
@@ -6,7 +6,7 @@ import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import logo from '../images/logo.png';
 import { theme } from "../themes/theme";
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 
 const useStyles = makeStyles({
@@ -68,9 +68,44 @@ function ProgressMobileStepper({activeStep}) {
     );
 }
 
-function Onboarding({children,title,activeStep,path}) {
+function Onboarding({children,title,activeStep,path,url}) {
 
     const classes = useStyles();
+    
+    const history = useHistory();
+
+    const [urlStore, setUrlStore] = useState("");
+
+    const handleContinueClick = () => {
+        let status;
+        if (activeStep === 1){
+            if (url === "") return alert('empty url');
+            fetch(`/user/${url}/event-type`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(res => {
+                    status = res.status;
+                    if (status < 500) return res.json();
+                    else throw Error("Server error");
+                })
+                .then(res => {
+                    if (status === 200) {
+                        if (res.unique === true) {
+                            setUrlStore(url);
+                            return history.push(path);
+                        };
+                        return alert("Url exist")
+                    };
+                    throw Error("Failed to check");                
+                })
+                .catch(err => {
+                    alert(err.message);
+                });
+        }
+    }
 
     return (
 
@@ -95,8 +130,9 @@ function Onboarding({children,title,activeStep,path}) {
 
                 <Grid item container xs={12} justify="center"> 
                     <Grid item xs={2}>
-                        <Button color="primary" variant="contained" fullWidth={true} className={classes.button}>
-                            <Link to={path} className={classes.link}>
+                        <Button color="primary" variant="contained" fullWidth={true} className={classes.button}
+                        onClick={handleContinueClick}>
+                            <Link className={classes.link}>
                                 <Typography variant="body2">{activeStep === 3? "Finish":"Continue"}</Typography>
                             </Link>
                         </Button>
