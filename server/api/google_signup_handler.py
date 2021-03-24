@@ -21,10 +21,11 @@ def googlesignup():
         if Users.query.filter_by(google_id=userid).first() is None:
             user_db = Users(name=name, 
                             email=email, 
-                            username=None, 
-                            password_hash=None, 
                             google_id=userid, 
                             url='',
+                            timezone='',
+                            available_day='',
+                            available_time='',
                             access_token=user_info.get('access_token'),
                             refresh_token=user_info.get('refresh_token')
                             )
