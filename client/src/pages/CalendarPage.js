@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import CalendarWidget from '../components/CalendarWidget';
 import Grid from '@material-ui/core/Grid';
@@ -10,6 +10,8 @@ import Button from '@material-ui/core/Button';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import Hidden from '@material-ui/core/Hidden';
+import moment from "moment";
+import { theme } from "../themes/theme";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -108,24 +110,74 @@ const useStyles = makeStyles((theme) => ({
 export default function CalendarPage() {
     const classes = useStyles();
     const [minDate, setMinDate] = useState(new Date());
-    // may need fetch from server with useEffect hook
-    const [times, setTimes] = useState([
-        '16:30',
-        '17:00',
-        '17:30',
-        '18:00',
-        '18:30',
-        '19:00',
-        '19:30',
-        '20:00',
-        '20:30',
-        '21:00',
-        '21:30'
-    ])
-    const listTime = times.map((time) =>
-        <Button variant="outlined" fullWidth className={classes.timeBtn}>
-            <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
-        </Button>
+    const [times, setTimes] = useState([]);
+    const [timePeriods, setTimePeriods] = useState([]);  
+    const [selectedDay, setSelectedDay] = useState(''); 
+    const [selectedTime, setSelectedTime] = useState(''); 
+    
+    const handleClickDay = (day) => {
+        setSelectedDay(day)
+    }
+
+    const handleClickTime = (e) => {
+        setSelectedTime(e.target.id.replace(/-/, ":"))
+    }
+
+    const TimeSlots = (start, end) => {
+        var start = moment(start, "HH:mm");
+        var end = moment(end, "HH:mm");
+        let times = [];        
+        while (start < end) {
+            times.push(start.format("HH:mm"));
+            start.add(30, 'minutes')
+        };
+        setTimes(times)
+    };    
+    
+    useEffect(()=>{
+        let userId = 1
+        let status;
+        fetch(`/availability/${userId}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }            
+        })
+            .then(res => {  
+                status = res.status;            
+                if (status < 500) return res.json();
+                else throw Error("Server error");
+            })
+            .then(res => {
+                if (status === 200) {
+                    console.log(res.busy);
+                    let dayStart = "07:00";
+                    let dayEnd = "17:00";
+                    TimeSlots(dayStart,dayEnd);
+                    setTimePeriods(res.busy)
+                }                                      
+                else throw Error("Failed to get calendar");                         
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+    }, [])
+    
+    const listTime = times.map((time) => 
+        timePeriods.map((period) => {        
+            let startTime = moment(moment(period.start).format("HH:mm"), "HH:mm");        
+            let endTime = moment(moment(period.end).format("HH:mm"), "HH:mm");          
+            if(!moment(time, "HH:mm").isBetween(startTime, endTime, undefined, '[)')){
+                return(
+                    <Button variant="outlined" fullWidth className={classes.timeBtn}
+                        onClick={handleClickTime} key={time.replace(/:/, "-")} 
+                        id={time.replace(/:/, "-")}
+                    >
+                        <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
+                    </Button>
+                )
+            }            
+        })            
     )
     return (
         <Grid container className={classes.body} >
@@ -150,7 +202,8 @@ export default function CalendarPage() {
                 </Grid>
                 <Grid item container direction="row">
                     <Grid item className={classes.colMid} sm={8}>
-                        <CalendarWidget minDate={minDate} />
+                        <CalendarWidget minDate={minDate} handleClickDay={handleClickDay}
+                        selectedDay={selectedDay} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
                             Coordinated Universal Time&nbsp;
                             </Typography>

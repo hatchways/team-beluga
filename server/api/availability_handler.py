@@ -26,7 +26,7 @@ def get_calendar_availability(id):
     
     return jsonify({
             "busy":google_client.get_user_calendar_info(timeMin=timeMin, timeMax=timeMax, timezone = timezone)}
-        )
+        ), 200
 
 
 
