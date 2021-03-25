@@ -2,11 +2,13 @@ from flask import jsonify, Blueprint, request
 import json
 from model.model import Users
 from config import db
+from utils.auth.middleware import check_token
 
 user_info_handler = Blueprint('user_info_handler', __name__)
 
 
 @user_info_handler.route('/user/<uid>', methods=['POST'])
+@check_token
 def update_user_info(uid):
     data = json.loads(request.get_data())
     start_time = data.get('startTime')

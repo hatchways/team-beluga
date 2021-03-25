@@ -4,11 +4,13 @@ from config import db
 from model.model import Users
 import datetime
 from tzlocal import get_localzone
+from utils.auth.middleware import check_token
 
 
 availability_handler = Blueprint('availability_handler', __name__)
 
 @availability_handler.route("/availability/<int:id>", methods=["GET"])
+@check_token
 def get_calendar_availability(id):
     user = Users.query.filter_by(id=id).first()
 

@@ -1,6 +1,7 @@
 from flask import jsonify, Blueprint, request
 from model.model import EventTypes
 from config import db
+from utils.auth.middleware import check_token
 
 eventType_handler = Blueprint('eventType_handler', __name__)
 
@@ -19,6 +20,7 @@ def field_validation(data):
 
 
 @eventType_handler.route('/',methods=["POST"])
+@check_token
 def create_eventType():
     data = request.get_json()
     valid_fields,msg = field_validation(data)
@@ -42,12 +44,14 @@ def create_eventType():
     })
 
 @eventType_handler.route('/',methods=["GET"])
+@check_token
 def get_eventType():
     all_eventTypes = EventTypes.query.all()
 
     return jsonify([eventTypes.to_dict() for eventTypes in all_eventTypes])
 
 @eventType_handler.route('/<int:id>',methods=["PUT"])
+@check_token
 def update_eventType(id):
     eventType_to_update = EventTypes.query.get(id)
 
@@ -70,6 +74,7 @@ def update_eventType(id):
     return jsonify({"success":"Event type succesfully updated!"})
 
 @eventType_handler.route('/<int:id>',methods=["DELETE"])
+@check_token
 def delete_eventType(id):
     eventType_to_delete = EventTypes.query.get(id)
 
