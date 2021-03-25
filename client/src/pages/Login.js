@@ -81,7 +81,7 @@ function Login() {
                     const cookies = new Cookies();
                     cookies.set('token', res.token, { path: '/', httpOnly: true });
                     user.setUserId(res.id);
-                    history.push("/profile-settings");
+                    history.push("/onboarding/profile-settings");
                 } else{
                     if (status === 401) alert(res.response);                         
                     else throw Error("Fail to login");
