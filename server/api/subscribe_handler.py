@@ -2,6 +2,7 @@ from flask import jsonify, request, Blueprint
 import stripe
 import json
 from config import STRIPE_API_KEY
+from utils.auth.middleware import check_token
 
 create_subscription_handler = Blueprint('create_subscription_handler', __name__)
 stripe.api_key = STRIPE_API_KEY
@@ -24,6 +25,7 @@ def create_customer(payment_method_id, email):
 
 
 @create_subscription_handler.route('/create-subscription', methods=['POST'])
+@check_token
 def create_subscription():
     try:
         data = json.loads(request.data)
