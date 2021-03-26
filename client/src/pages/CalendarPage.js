@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import CalendarWidget from '../components/CalendarWidget';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +12,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import Hidden from '@material-ui/core/Hidden';
 import moment from "moment";
 import { theme } from "../themes/theme";
+import { UserContext } from '../globals/UserContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -70,6 +71,13 @@ const useStyles = makeStyles((theme) => ({
         '& button': {
             display: 'block'
         },
+        '& .time-active': {
+            backgroundColor: theme.palette.primary.main,
+            color: '#fff',
+            '& span svg': {
+                color: '#fff'
+            }
+        },
         maxHeight: 350,
         overflow: 'auto',
         marginTop: 30,
@@ -93,7 +101,10 @@ const useStyles = makeStyles((theme) => ({
         marginBottom: 5,
         color: theme.palette.light.main,
         borderColor: theme.palette.light.light,
-        alignItems: 'center'
+        alignItems: 'center',
+        '& span': {
+            pointerEvents: 'none'
+        }
     },
     dotIcon: {
         fontSize: 12,
@@ -110,12 +121,17 @@ const useStyles = makeStyles((theme) => ({
 export default function CalendarPage() {
     const classes = useStyles();
     const [minDate, setMinDate] = useState(new Date());
+    const [currentMonth, setCurrentMonth] = useState(''); //date of the first day of the month
     const [times, setTimes] = useState([]);
-    const [timePeriods, setTimePeriods] = useState([]);  
-    const [selectedDay, setSelectedDay] = useState(''); 
-    const [selectedTime, setSelectedTime] = useState(''); 
-    
+    const [timePeriods, setTimePeriods] = useState([]);
+    const [selectedDay, setSelectedDay] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState('');
+
     const handleClickDay = (day) => {
+        if (selectedDay !== "" && new Date(day).getMonth() !== new Date(selectedDay).getMonth()) {
+            let yearMonth = new Date(day).toISOString();
+            setCurrentMonth(yearMonth);
+        };
         setSelectedDay(day)
     }
 
@@ -126,59 +142,83 @@ export default function CalendarPage() {
     const TimeSlots = (start, end) => {
         var start = moment(start, "HH:mm");
         var end = moment(end, "HH:mm");
-        let times = [];        
+        let times = [];
         while (start < end) {
             times.push(start.format("HH:mm"));
             start.add(30, 'minutes')
         };
         setTimes(times)
-    };    
-    
-    useEffect(()=>{
-        let userId = 1
+    };
+
+    const user = useContext(UserContext);
+    useEffect(() => {
+        let userId = user.userId;
         let status;
-        fetch(`/availability/${userId}`, {
+        fetch(`/availability/${userId}?ym=${currentMonth}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            }            
+            }
         })
-            .then(res => {  
-                status = res.status;            
+            .then(res => {
+                status = res.status;
                 if (status < 500) return res.json();
                 else throw Error("Server error");
             })
             .then(res => {
                 if (status === 200) {
-                    console.log(res.busy);
-                    let dayStart = "07:00";
-                    let dayEnd = "17:00";
-                    TimeSlots(dayStart,dayEnd);
+                    TimeSlots(res.dayStart, res.dayEnd);
                     setTimePeriods(res.busy)
-                }                                      
-                else throw Error("Failed to get calendar");                         
+                }
+                else throw Error("Failed to get calendar");
             })
             .catch(err => {
                 alert(err.message);
             });
-    }, [])
-    
-    const listTime = times.map((time) => 
-        timePeriods.map((period) => {        
-            let startTime = moment(moment(period.start).format("HH:mm"), "HH:mm");        
-            let endTime = moment(moment(period.end).format("HH:mm"), "HH:mm");          
-            if(!moment(time, "HH:mm").isBetween(startTime, endTime, undefined, '[)')){
-                return(
-                    <Button variant="outlined" fullWidth className={classes.timeBtn}
-                        onClick={handleClickTime} key={time.replace(/:/, "-")} 
-                        id={time.replace(/:/, "-")}
-                    >
-                        <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
-                    </Button>
-                )
-            }            
-        })            
-    )
+    }, [currentMonth]);
+
+    const listTime = times.map((time) => {
+        if (timePeriods.length === 0) {
+            return (
+                <Button variant="outlined" fullWidth
+                    className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""
+                        }`}
+                    onClick={handleClickTime} id={time.replace(/:/, "-")}
+                    key={moment(selectedDay).format("YYYY-MM-DD") + time.replace(/:/, "-")}
+                >
+                    <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
+                </Button>
+            );
+        };
+        let dateTime = moment(
+            moment(selectedDay).format("YYYY-MM-DD") + ' ' + moment(time, "HH:mm").format("HH:mm"),
+            "YYYY-MM-DD HH:mm"
+        );
+        let timeRendered = [];
+        let timeExclude = [];
+        timePeriods.map((busy) => {
+            let busyStart = moment(moment(busy.start).format("YYYY-MM-DD HH:mm"), "YYYY-MM-DD HH:mm");
+            let busyEnd = moment(moment(busy.end).format("YYYY-MM-DD HH:mm"), "YYYY-MM-DD HH:mm");
+            if (timeExclude.includes(time)) return;
+            if (timeRendered.includes(time)) return;
+            if (dateTime.isBetween(busyStart, busyEnd, undefined, '[)')) {
+                timeExclude.push(time);
+                return
+            }; 
+        });
+        if (!timeRendered.includes(time) && !timeExclude.includes(time)) {
+            timeRendered.push(time);
+            return (
+                <Button variant="outlined" fullWidth
+                    className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""}`}
+                    onClick={handleClickTime}
+                    key={dateTime} id={time.replace(/:/, "-")}
+                >
+                    <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
+                </Button>
+            )         
+        }
+    })
     return (
         <Grid container className={classes.body} >
             <Grid item sm className={classes.colLeft}>
@@ -203,7 +243,7 @@ export default function CalendarPage() {
                 <Grid item container direction="row">
                     <Grid item className={classes.colMid} sm={8}>
                         <CalendarWidget minDate={minDate} handleClickDay={handleClickDay}
-                        selectedDay={selectedDay} />
+                            selectedDay={selectedDay} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
                             Coordinated Universal Time&nbsp;
                             </Typography>
