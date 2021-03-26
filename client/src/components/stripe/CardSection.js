@@ -3,16 +3,26 @@
 */
 import React from 'react';
 import {CardElement} from '@stripe/react-stripe-js';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+  card: {
+    border: "1px solid #ccc",
+    padding:10
+  }
+}));
+
 const CARD_ELEMENT_OPTIONS = {
   style: {
     base: {
       color: "#32325d",
-      fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+      fontFamily: '"Roboto',
       fontSmoothing: "antialiased",
       fontSize: "16px",
       "::placeholder": {
         color: "#aab7c4",
       },
+      height:"100%"
     },
     invalid: {
       color: "#fa755a",
@@ -20,12 +30,15 @@ const CARD_ELEMENT_OPTIONS = {
     },
   },
 };
+
+
 function CardSection() {
+
+  const classes = useStyles()
   return (
-    <label>
-      Card details
+    <div className={classes.card}>
       <CardElement options={CARD_ELEMENT_OPTIONS} />
-    </label>
+    </div>
   );
 };
 export default CardSection;

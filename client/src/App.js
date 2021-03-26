@@ -7,11 +7,11 @@ import SignUp from "./pages/SignUp";
 import Home from "./pages/Home";
 import CalendarPage from "./pages/CalendarPage";
 import { UserContextProvider } from "./globals/UserContext";
-import StripeCheckout from "./pages/StripeCheckout";
 import Onboarding from "./pages/Onboarding";
 import { AlertContextProvider } from "./globals/AlertContext";
 import FlashAlert from './components/FlashAlert';
 import PrivateRoute from "./components/PrivateRoute";
+import Upgrade from "./pages/Upgrade";
 import "./App.css";
 
 
@@ -28,7 +28,7 @@ function App() {
             <Route path="/calendar" component={CalendarPage} />
             <PrivateRoute exact path={["/", "/home", "/home/:page"]} component={Home} />
             <PrivateRoute exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
-            <PrivateRoute exact path="/checkout" component={StripeCheckout} />
+            <PrivateRoute exact path="/upgrade" component={Upgrade} />
           </BrowserRouter>
         </AlertContextProvider>
       </UserContextProvider>
