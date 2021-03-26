@@ -1,12 +1,13 @@
-import React from "react";
-import Onboarding from "../components/Onboarding";
+import React, {useEffect} from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
 import Checkbox from '@material-ui/core/Checkbox';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
-import DropdownSelect from '../components/DropdownSelect';
+import DropdownSelect from '../DropdownSelect';
+import { useHistory } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     checkBoxContainer: {
@@ -21,7 +22,17 @@ const useStyles = makeStyles((theme) => ({
 
     checkBoxText: {
         fontSize:"12px"
-    }
+    },
+
+    body: {
+        padding: "50px 50px 50px 50px",
+        marginBottom:"20px"
+    },
+
+    button: {
+        marginBottom:"70px",
+        color:"#ffffff"
+    },
 }))
 
 const timeOptions = []
@@ -120,9 +131,7 @@ function CheckBox() {
     )
 }
 
-const path = "/home/event"
-
-function UserAvailability() {
+function UserAvailability({setters}) {
 
     const classes = useStyles();
     
@@ -138,32 +147,51 @@ function UserAvailability() {
         setEndTime(event.target.value)
     }
 
+    useEffect( ()=>{
+        setters.setTitle("Set your availability!")
+        setters.setActiveStep(3)
+    },[setters])
+
+    const history = useHistory();
+
+    const clickHandler = () => {
+        history.push("/home")
+    }
+
     return (
-        <Onboarding title="Set your availability" activeStep={3} path={path}>
-            <Grid container item xs={12} alignItems="center">
-                <Grid item xs={12} style={{marginBottom:10}}>
-                    <Typography variant="subtitle2">Available Hours:</Typography>
-                </Grid>
-                <Grid container item xs={12} alignItems="center" spacing={3}>
-                    <Grid item xs={3}> 
-                        <DropdownSelect defaultValue={startTime} handler={handleStartTimeChange} options={timeOptions}/>
+        <Grid container item xs={12}>
+            <Grid item container xs={12} className={classes.body} direction="column" spacing={4} justify="center">
+                <Grid container item xs={12} alignItems="center">
+                    <Grid item xs={12} style={{marginBottom:10}}>
+                        <Typography variant="subtitle2">Available Hours:</Typography>
                     </Grid>
-                    
-                    <Grid item><Typography variant="h6">-</Typography></Grid>
+                    <Grid container item xs={12} alignItems="center" spacing={3}>
+                        <Grid item xs={3}> 
+                            <DropdownSelect defaultValue={startTime} handler={handleStartTimeChange} options={timeOptions}/>
+                        </Grid>
+                        
+                        <Grid item><Typography variant="h6">-</Typography></Grid>
 
-                    <Grid item xs={3}>    
-                        <DropdownSelect defaultValue={endTime} handler={handleEndTimeChange}  options={timeOptions}/>
+                        <Grid item xs={3}>    
+                            <DropdownSelect defaultValue={endTime} handler={handleEndTimeChange}  options={timeOptions}/>
+                        </Grid>
                     </Grid>
+                </Grid>
+
+                <Grid container item xs={12} alignItems="center" className={classes.checkBoxContainer}>
+                    <Grid item xs={12} style={{marginBottom:10}}>
+                        <Typography variant="subtitle2">Available Days:</Typography>
+                    </Grid>
+                    <CheckBox />
                 </Grid>
             </Grid>
 
-            <Grid container item xs={12} alignItems="center" className={classes.checkBoxContainer}>
-                <Grid item xs={12} style={{marginBottom:10}}>
-                    <Typography variant="subtitle2">Available Days:</Typography>
-                </Grid>
-                <CheckBox />
+            <Grid item container xs={12} justify="center"> 
+                <Button color="primary" variant="contained"  onClick={clickHandler} className={classes.button} type="submit">
+                    <Typography variant="body2">Continue</Typography>
+                </Button>
             </Grid>
-        </Onboarding>
+        </Grid>
     )
 }
 
