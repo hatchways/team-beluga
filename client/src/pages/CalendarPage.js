@@ -68,21 +68,16 @@ const useStyles = makeStyles((theme) => ({
     },
     timeContainer: {
         width: '100%',
+        minWidth: 200,
         '& button': {
             display: 'block'
         },
-        '& .time-active': {
-            backgroundColor: theme.palette.primary.main,
-            color: '#fff',
-            '& span svg': {
-                color: '#fff'
-            }
-        },
         maxHeight: 350,
-        overflow: 'auto',
+        overflowY: 'auto',
+        overflowX: 'hidden',
         marginTop: 30,
         border: 0,
-        paddingRight: 25,
+        paddingRight: '10%',
         '&::-webkit-scrollbar': {
             width: '0.4em'
         },
@@ -95,21 +90,53 @@ const useStyles = makeStyles((theme) => ({
             borderRadius: 50
         }
     },
+    timeBtnContainer: {
+        display: 'block',
+        whiteSpace: 'nowrap'
+    },
     timeBtn: {
         paddingTop: 10,
         paddingBottom: 10,
         marginBottom: 5,
+        marginRight: '12%',
         color: theme.palette.light.main,
         borderColor: theme.palette.light.light,
         alignItems: 'center',
         '& span': {
             pointerEvents: 'none'
-        }
+        },
+        width: '100%',
+        display: 'inline-block!important',
+        '&.time-active': {
+            backgroundColor: theme.palette.primary.main,
+            borderColor: theme.palette.primary.main,
+            color: '#fff',
+            '& span svg': {
+                color: '#fff'
+            },
+            marginRight: '3%',
+            width: '48.5%',
+            transition: 'width 0.3s ease-in-out'
+        },
     },
     dotIcon: {
         fontSize: 12,
         verticalAlign: 'middle',
         color: theme.palette.primary.main
+    },
+    confirmBtn: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginBottom: 5,
+        color: theme.palette.primary.main,
+        borderColor: theme.palette.primary.main,
+        alignItems: 'center',
+        '&:hover': {
+            color: '#fff',
+            backgroundColor: theme.palette.primary.main
+        },
+        width: '48.5%',
+        display: 'inline-block!important'
     },
     arrowDownIcon: {
         fontSize: 16,
@@ -132,11 +159,16 @@ export default function CalendarPage() {
             let yearMonth = new Date(day).toISOString();
             setCurrentMonth(yearMonth);
         };
-        setSelectedDay(day)
+        setSelectedDay(day);
+        setSelectedTime('')
     }
 
     const handleClickTime = (e) => {
         setSelectedTime(e.target.id.replace(/-/, ":"))
+    }
+
+    const handleConfirm = () => {
+        
     }
 
     const TimeSlots = (start, end) => {
@@ -152,7 +184,8 @@ export default function CalendarPage() {
 
     const user = useContext(UserContext);
     useEffect(() => {
-        let userId = user.userId;
+        //let userId = user.userId;
+        let userId = 1;
         let status;
         fetch(`/availability/${userId}?ym=${currentMonth}`, {
             method: "GET",
@@ -180,14 +213,19 @@ export default function CalendarPage() {
     const listTime = times.map((time) => {
         if (timePeriods.length === 0) {
             return (
-                <Button variant="outlined" fullWidth
-                    className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""
-                        }`}
-                    onClick={handleClickTime} id={time.replace(/:/, "-")}
-                    key={moment(selectedDay).format("YYYY-MM-DD") + time.replace(/:/, "-")}
-                >
-                    <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
-                </Button>
+                <Grid className={classes.timeBtnContainer}>
+                    <Button variant="outlined"
+                        className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""
+                            }`}
+                        onClick={handleClickTime} id={time.replace(/:/, "-")}
+                        key={moment(selectedDay).format("YYYY-MM-DD") + time.replace(/:/, "-")}
+                    >
+                        <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
+                    </Button>
+                    <Button variant="outlined" className={classes.confirmBtn}>
+                        Confirm
+                    </Button>
+                </Grid>
             );
         };
         let dateTime = moment(
@@ -204,19 +242,24 @@ export default function CalendarPage() {
             if (dateTime.isBetween(busyStart, busyEnd, undefined, '[)')) {
                 timeExclude.push(time);
                 return
-            }; 
+            };
         });
         if (!timeRendered.includes(time) && !timeExclude.includes(time)) {
             timeRendered.push(time);
             return (
-                <Button variant="outlined" fullWidth
-                    className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""}`}
-                    onClick={handleClickTime}
-                    key={dateTime} id={time.replace(/:/, "-")}
-                >
-                    <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
-                </Button>
-            )         
+                <Grid className={classes.timeBtnContainer}>
+                    <Button variant="outlined"
+                        className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""}`}
+                        onClick={handleClickTime}
+                        key={dateTime} id={time.replace(/:/, "-")}
+                    >
+                        <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
+                    </Button>
+                    <Button variant="outlined" className={classes.confirmBtn} onclick={handleConfirm}>
+                        Confirm
+                    </Button>
+                </Grid>
+            )
         }
     })
     return (
@@ -241,7 +284,7 @@ export default function CalendarPage() {
                     </Typography>
                 </Grid>
                 <Grid item container direction="row">
-                    <Grid item className={classes.colMid} sm={8}>
+                    <Grid item className={classes.colMid} md={8}>
                         <CalendarWidget minDate={minDate} handleClickDay={handleClickDay}
                             selectedDay={selectedDay} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
@@ -252,7 +295,7 @@ export default function CalendarPage() {
                                 <ArrowDropDownIcon className={classes.arrowDownIcon} />
                         </Typography>
                     </Grid>
-                    <Grid item sm={4} className={classes.colRight}>
+                    <Grid item md={4} className={classes.colRight}>
                         <Typography variant="subtitle1" className={classes.dateRight}>
                             Wednesday,Februry 12
                             </Typography>

@@ -23,7 +23,7 @@ def get_calendar_availability(id):
     yearMonth = request.args.get('ym')
     print(yearMonth)
     if yearMonth is None or yearMonth == "":
-        # TODO: Update timeMin & timeMax from time obtained from frontend
+        # TODO: Update timeMin & timeMax from time obtained from frontend (Done)
         timeMin = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
         last_day = calendar.monthrange(datetime.datetime.utcnow().year, datetime.datetime.utcnow().month)[1]
         timeMax = datetime.datetime.utcnow().replace(day=last_day, hour=23, minute=59,second=59).isoformat() + 'Z'
