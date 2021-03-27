@@ -61,16 +61,16 @@ const useStyles = makeStyles((theme) => ({
                 textDecoration: 'none'
             }            
         },
+        '& .react-calendar__tile--now': {
+            background: theme.palette.primary.light,
+            color: '#fff'
+        },
         '& .react-calendar__tile--active': {
             background: theme.palette.primary.main
         },
         '& .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus': {
             background: theme.palette.primary.main
-        },
-        '& .react-calendar__tile--now': {
-            background: theme.palette.primary.light,
-            color: '#fff'
-        },
+        },        
         '& .react-calendar__tile:disabled': {
             background: 'none'
         },

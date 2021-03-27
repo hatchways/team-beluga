@@ -21,7 +21,7 @@ def get_calendar_availability(id):
     google_client = GoogleClient(access_token=user.access_token, refresh_token=user.refresh_token)
 
     yearMonth = request.args.get('ym')
-    print(yearMonth)
+
     if yearMonth is None or yearMonth == "":
         # TODO: Update timeMin & timeMax from time obtained from frontend (Done)
         timeMin = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time

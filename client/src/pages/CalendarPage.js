@@ -13,6 +13,7 @@ import Hidden from '@material-ui/core/Hidden';
 import moment from "moment";
 import { theme } from "../themes/theme";
 import { UserContext } from '../globals/UserContext';
+import EmailDialog from '../components/EmailDialog';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -167,10 +168,6 @@ export default function CalendarPage() {
         setSelectedTime(e.target.id.replace(/-/, ":"))
     }
 
-    const handleConfirm = () => {
-        
-    }
-
     const TimeSlots = (start, end) => {
         var start = moment(start, "HH:mm");
         var end = moment(end, "HH:mm");
@@ -222,9 +219,7 @@ export default function CalendarPage() {
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <Button variant="outlined" className={classes.confirmBtn}>
-                        Confirm
-                    </Button>
+                    <EmailDialog />
                 </Grid>
             );
         };
@@ -255,9 +250,7 @@ export default function CalendarPage() {
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <Button variant="outlined" className={classes.confirmBtn} onclick={handleConfirm}>
-                        Confirm
-                    </Button>
+                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime} />
                 </Grid>
             )
         }
@@ -304,8 +297,7 @@ export default function CalendarPage() {
                         </Paper>
                     </Grid>
                 </Grid>
-            </Grid>
-
+            </Grid>            
         </Grid>
     )
 }

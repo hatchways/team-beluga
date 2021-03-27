@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -7,47 +8,106 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 
-export default function FormDialog() {
-  const [open, setOpen] = React.useState(false);
+const useStyles = makeStyles((theme) => ({
+    confirmBtn: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        marginBottom: 5,
+        color: theme.palette.primary.main,
+        borderColor: theme.palette.primary.main,
+        alignItems: 'center',
+        '&:hover': {
+            color: '#fff',
+            backgroundColor: theme.palette.primary.main
+        },
+        width: '48.5%',
+        display: 'inline-block!important'
+    },
+}));
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+export default function EmailDialog(props) {
+    
+    const classes = useStyles();
 
-  const handleClose = () => {
-    setOpen(false);
-  };
+    const [open, setOpen] = useState(false);
+    const [email, setEmail] = useState('');
 
-  return (
-    <div>
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open form dialog
-      </Button>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Email Address"
-            type="email"
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleClose} color="primary">
-            Subscribe
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleEmailChange = (e) => {
+        setEmail(e.target.value)
+    }
+
+    const handleSubmit = () => {
+        let status;
+        const dateString = new Date(props.selectedDay).toISOString().substring(0, 10);
+        const dateTimeString = new Date(dateString + ' ' + props.selectedTime).toISOString();
+        fetch('/appointment', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: {
+                dateTime: dateTimeString
+            }
+        })
+            .then(res => {
+                status = res.status;
+                if (status < 500) return res.json();
+                else throw Error("Server error");
+            })
+            .then(res => {
+                if (status === 200 && res.success == true) {
+                    alert('success')
+                }
+                else throw Error("Failed to get calendar");
+            })            
+            .catch(err => {
+                alert(err.message);
+            });
+        setOpen(false);
+    }
+
+    return (
+        <>
+            <Button variant="outlined" color="primary" onClick={handleClickOpen}
+            className={classes.confirmBtn}>
+                Confirm
+            </Button>
+            <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Book Appointment</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        To book an appointment, please enter your email address here to 
+                        receive email confirmation.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                        value={email}
+                        onChange={handleEmailChange}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary">
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
 }
