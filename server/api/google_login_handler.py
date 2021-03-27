@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint, request
+from flask import jsonify, Blueprint, request, make_response
 from utils.auth.google_client import GoogleClient
 import json
 from utils.auth.token_generator import token_generator
@@ -20,6 +20,15 @@ def googlelogin():
             user_db = Users.query.filter_by(google_id=userid).first()
             uid = user_db.id
             token = token_generator(uid)
-            return jsonify({'response': 'Login success', 'token': token, 'id': uid}), 200
+            
+            ret = jsonify({'response': 'Login success', 
+                            'id': uid,
+                            'user_url': user_db.url,
+                            'user_timezone': user_db.timezone,
+                            'user_available_day': user_db.available_day,
+                            'user_available_time': user_db.available_time
+                            })
+            ret.set_cookie("token", token, httponly = True)
+            return ret,200
         return jsonify({'response': 'Please Sign Up'}), 401
     return jsonify({'response': 'Login fail'}), 401

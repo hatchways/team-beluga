@@ -74,6 +74,7 @@ function Signup() {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({ code: response.code })
         })
             .then(res => {
@@ -84,12 +85,15 @@ function Signup() {
             .then(res => {
                 if (status === 200) {
                     alert(res.response);
-                    const cookies = new Cookies();
-                    cookies.set('token', res.token, { path: '/', httpOnly: true });
                     user.setUserId(res.id);
                     history.push("/onboarding/profile-settings");
                 } else {
-                    if (status === 401) alert(res.response);                         
+                    if (status === 401) 
+                        alert(res.response); 
+                    else if (status === 409) {
+                        history.push("/login");
+                        alert(res.response)
+                    }                        
                     else throw Error("Fail to login");
                 }
             })

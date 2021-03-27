@@ -1,6 +1,6 @@
 import logo from "../images/logo.png"
 import React from "react";
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -47,6 +47,7 @@ function Header() {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const history = useHistory();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -55,6 +56,39 @@ function Header() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const logout = () => {
+    let status
+    fetch("/logout", {
+      method: "POST",
+      credentials: "include"
+    })
+    .then(res => {
+        status = res.status
+
+        if (status < 500) return res.json();
+        else throw Error("Server error");
+    })
+    .then(res=> {
+        if (status === 200) {
+          alert(res.response)
+          setAnchorEl(null)
+          history.push("/login")
+        }
+        else if (status === 400) {
+          alert(res.response)
+          setAnchorEl(null)
+        }
+        else 
+          throw Error("Server error");
+      })
+    .catch(err => {
+      setAnchorEl(null)
+      alert(err.message);
+    })
+
+
+  }
 
 
 return (
@@ -92,15 +126,10 @@ return (
                   horizontal: 'right',
                 }}
                 keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
                 open={open}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={logout}>Logout</MenuItem>                
               </Menu>
             </Grid>
           </Grid>

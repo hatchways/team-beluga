@@ -10,6 +10,7 @@ function stripeCheckoutHandler(result) {
         fetch('/create-subscription', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            credentials: "include",
             body: JSON.stringify({
                 priceId: 'price_1IY2oXFSBPZAgVJdLwijjbRb',
                 payment_method_id: result.paymentMethod.id,

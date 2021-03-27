@@ -68,20 +68,27 @@ function Login() {
             headers: {
                 "Content-Type": "application/json"
             },
+            credentials: "include",
             body: JSON.stringify({ code: response.code })
         })
             .then(res => {
-                status = res.status;
-                if (status < 500) return res.json();
-                else throw Error("Server error");
+                status = res.status
+                if (status < 500) 
+                    return res.json()
+                else 
+                    throw Error("Server error")
             })
             .then(res => {
                 if (status === 200) {
                     alert(res.response);
-                    const cookies = new Cookies();
-                    cookies.set('token', res.token, { path: '/', httpOnly: true });
                     user.setUserId(res.id);
-                    history.push("/onboarding/profile-settings");
+                    
+                    if (res.user_url.length === 0 || res.user_timezone.length === 0)
+                        history.push("/onboarding/profile-settings");
+                    else if (res.user_available_day.length === 0 || res.user_available_time.length === 0)
+                        history.push("/onboarding/availability")
+                    else
+                        history.push("/home");
                 } else{
                     if (status === 401) alert(res.response);                         
                     else throw Error("Fail to login");
