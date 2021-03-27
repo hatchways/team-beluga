@@ -14,6 +14,7 @@ import moment from "moment";
 import { theme } from "../themes/theme";
 import { UserContext } from '../globals/UserContext';
 import EmailDialog from '../components/EmailDialog';
+import { AlertContext } from '../globals/AlertContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -155,6 +156,9 @@ export default function CalendarPage() {
     const [selectedDay, setSelectedDay] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
 
+    const alertContext = useContext(AlertContext);
+    const user = useContext(UserContext);
+
     const handleClickDay = (day) => {
         if (selectedDay !== "" && new Date(day).getMonth() !== new Date(selectedDay).getMonth()) {
             let yearMonth = new Date(day).toISOString();
@@ -178,11 +182,9 @@ export default function CalendarPage() {
         };
         setTimes(times)
     };
-
-    const user = useContext(UserContext);
+    
     useEffect(() => {
-        //let userId = user.userId;
-        let userId = 1;
+        let userId = user.userId;
         let status;
         fetch(`/availability/${userId}?ym=${currentMonth}`, {
             method: "GET",
@@ -192,8 +194,9 @@ export default function CalendarPage() {
         })
             .then(res => {
                 status = res.status;
-                if (status < 500) return res.json();
-                else throw Error("Server error");
+                if (status >= 500) throw Error("Server error");
+                if (status >= 400) throw Error("Failed to get calendar data");
+                return res.json();
             })
             .then(res => {
                 if (status === 200) {
@@ -203,7 +206,11 @@ export default function CalendarPage() {
                 else throw Error("Failed to get calendar");
             })
             .catch(err => {
-                alert(err.message);
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                })
             });
     }, [currentMonth]);
 
