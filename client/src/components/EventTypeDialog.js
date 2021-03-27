@@ -16,6 +16,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import FormLabel from '@material-ui/core/FormLabel';
 import AddIcon from '@material-ui/icons/Add';
 import { UserContext } from '../globals/UserContext';
+import { AlertContext } from '../globals/AlertContext';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -57,6 +58,8 @@ export default function EventTypeDialog() {
     const [url, setUrl] = useState('');
     const [color, setColor] = useState('');
 
+    const alertContext = useContext(AlertContext)
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -84,37 +87,54 @@ export default function EventTypeDialog() {
     const userId = useContext(UserContext).userId;
 
     const handleConfirm = () => {
-        if (title===''||duration===''||url===''||color==='') return alert('Missing Field(s)'); //might need to change after discuss
-        let status;
-        fetch("/event-types/", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify({
-                user_id: userId,
-                title: title,
-                url: url,
-                duration: duration,
-                color: color
+        if (title===''||duration===''||url===''||color==='') {
+            alertContext.setAlertStatus({
+                isOpen:true,
+                message:"Missing field(s)",
+                type:"error"
+              })
+         } //might need to change after discuss
+
+        else {
+            let status;
+            fetch("/event-types/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    user_id: userId,
+                    title: title,
+                    url: url,
+                    duration: duration,
+                    color: color
+                })
             })
-        })
-            .then(res => {
-                status = res.status;
-                if (status < 500) return res.json();
-                else throw Error("Server error");
-            })
-            .then(res => {
-                if (status === 200) {
-                    alert(res.success); //might need to change after discuss
-                    setOpen(false);
-                }
-                else throw Error("Fail to fetch data");
-            })
-            .catch(err => {
-                alert(err.message); //might need to change after discuss
-            });                
+                .then(res => {
+                    status = res.status;
+                    if (status < 500) return res.json();
+                    else throw Error("Server error");
+                })
+                .then(res => {
+                    if (status === 200) {
+                        alertContext.setAlertStatus({        //might need to change after discuss
+                            isOpen:true,
+                            message:res.success,
+                            type:"success"
+                        })
+                        setOpen(false);
+                    }
+                    else throw Error("Fail to fetch data");
+                })
+                .catch(err => {                             //might need to change after discuss
+                    alertContext.setAlertStatus({
+                        isOpen:true,
+                        message:err.message,
+                        type:"error"
+                    })
+                });   
+        }             
     };
 
     return (

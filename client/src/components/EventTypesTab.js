@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import EventTypeDialog from './EventTypeDialog';
 import Grid from '@material-ui/core/Grid';
@@ -12,6 +12,7 @@ import Divider from '@material-ui/core/Divider';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import AccessTimeOutlinedIcon from '@material-ui/icons/AccessTimeOutlined';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
+import { AlertContext } from '../globals/AlertContext';
 
 const useStyles = makeStyles((theme) => ({
     //card
@@ -92,12 +93,23 @@ function EventTypeCard(props) {
     const classes = useStyles();
     const { color, duration, title, url } = props;
     const [link, setLink] = useState(url);
+
+    const alertContext = useContext(AlertContext)
+
     const handleCopyLink = () => {
         navigator.clipboard.writeText('calendapp.com/userurl/'+link)//need to change 'userurl' as fetched later
         .then(() => {
-            alert('Copied: '+link)
+            alertContext.setAlertStatus({
+                isOpen:true,
+                message:"Copied: " + link,
+                type:"info"
+              })
         }, () => {
-            alert('Fail to copy, Please copy manually')
+            alertContext.setAlertStatus({
+                isOpen:true,
+                message:"Fail to copy, Please copy manually",
+                type:"error"
+              })
         });        
     };
     return (
@@ -135,6 +147,9 @@ function EventTypeCard(props) {
 export default function EventTypesTab() {
     const classes = useStyles();
     const [cardInfo, setCardInfo] = useState([]);
+
+    const alertContext = useContext(AlertContext)
+
     useEffect(() => {
         let status;
         fetch("/event-types/", {
@@ -154,7 +169,11 @@ export default function EventTypesTab() {
                 else throw Error("Fail to fetch data");
             })
             .catch(err => {
-                alert(err.message);
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                  })
             });
     }, []);
     const cards = cardInfo.map((card) =>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
 import TextField from '@material-ui/core/TextField';
@@ -7,7 +7,8 @@ import DropdownSelect from '../DropdownSelect';
 import moment from 'moment-timezone';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import {AlertContext} from '../../globals/AlertContext';
 
 
 const useStyles = makeStyles({
@@ -42,35 +43,54 @@ function ProfileSetting({setters}) {
 
     const history = useHistory();
 
+    const alertContext = useContext(AlertContext)
+
     const clickHandler = () => {
         let status=0;
-        if (url === "") return alert('empty url');
-        fetch(`/user/${url}/event-type`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        .then(res => {
-                status = res.status;
-                if (status < 500) return res.json();
-                else throw Error("Server error");
-        })
-        .then(res => {
-                if (status === 200) {
-                    if (res.unique === true) {
-                        // Store url in backend  
-                        history.push("/onboarding/calendar-confirm")
-                        return                    
-                    }
-                    
-                    return alert("Url exist")
-                };
-                throw Error("Failed to check");                
-        })
-        .catch(err => {
-            alert(err.message);
-        });
+        if (url === "") {
+            alertContext.setAlertStatus({
+                isOpen:true,
+                message:"URL field cannot be empty",
+                type:"error"
+                })    
+        }
+        else{
+            fetch(`/user/${url}/event-type`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials:"include"
+            })
+            .then(res => {
+                    status = res.status;
+                    if (status < 500) return res.json();
+                    else throw Error("Server error");
+            })
+            .then(res => {
+                    if (status === 200) {
+                        if (res.unique === true) {
+                            // Store url in backend  
+                            history.push("/onboarding/calendar-confirm")
+                            return                    
+                        }
+                        
+                        alertContext.setAlertStatus({
+                            isOpen:true,
+                            message:"URL already exist",
+                            type:"error"
+                            })   
+                    };
+                    throw Error("Failed to check URL");                
+            })
+            .catch(err => {
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                    })    
+            });
+        }
     }
 
     useEffect( ()=>{

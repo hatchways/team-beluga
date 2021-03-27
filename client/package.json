@@ -7,6 +7,7 @@
     "@material-ui/icons": "^4.11.2",
     "@stripe/react-stripe-js": "^1.4.0",
     "@stripe/stripe-js": "^1.13.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "dotenv": "^8.2.0",
     "material-ui-color": "^0.4.11",
     "moment-timezone": "^0.5.33",

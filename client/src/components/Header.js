@@ -1,5 +1,4 @@
-import logo from "../images/logo.png"
-import React from "react";
+import React, { useContext } from "react";
 import { Link, useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -9,6 +8,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
+import logo from "../images/logo.png"
+import {AlertContext} from '../globals/AlertContext'; 
 
 
 // TODO: Add correct links, load profile pic/username, fix popup menu, make responsive
@@ -38,9 +39,9 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const navLinks = [
-  { title: 'Home', path: '' },
-  { title: 'Integration', path: '' },
-  { title: 'Upgrade account', path: '' },
+  { id:1, title: 'Home', path: '' },
+  { id:2, title: 'Integration', path: '' },
+  { id:3, title: 'Upgrade account', path: '' },
 ]
 
 function Header() {
@@ -48,6 +49,7 @@ function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const history = useHistory();
+  const alertContext = useContext(AlertContext)
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -71,12 +73,20 @@ function Header() {
     })
     .then(res=> {
         if (status === 200) {
-          alert(res.response)
+          alertContext.setAlertStatus({
+            isOpen:true,
+            message:res.response,
+            type:"success"
+            })   
           setAnchorEl(null)
           history.push("/login")
         }
         else if (status === 400) {
-          alert(res.response)
+            alertContext.setAlertStatus({
+            isOpen:true,
+            message:res.response,
+            type:"error"
+            })  
           setAnchorEl(null)
         }
         else 
@@ -84,10 +94,12 @@ function Header() {
       })
     .catch(err => {
       setAnchorEl(null)
-      alert(err.message);
+      alertContext.setAlertStatus({
+        isOpen:true,
+        message:err.message,
+        type:"error"
+        })  
     })
-
-
   }
 
 
@@ -100,8 +112,8 @@ return (
           </Grid>
 
           <Grid item container lg={5} justify="space-evenly" className={classes.links}>
-            {navLinks.map(({ title, path }) => (
-                <Grid item>
+            {navLinks.map(({id, title, path }) => (
+                <Grid item key={id}>
                     <Link to={path} style= {{textDecoration: 'none'}}>
                         <Typography variant="h6" color={title==="Upgrade account"? "primary":"secondary"}>
                             {title}
