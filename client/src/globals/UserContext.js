@@ -13,7 +13,8 @@ export const UserContextProvider = (props) => {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
-            }
+            },
+            credentials: "include"
         })
             .then(res => {
                 if (res.status === 200 && res.success === true) return setUserId(res.userId);
