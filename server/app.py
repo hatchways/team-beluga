@@ -11,6 +11,7 @@ from api.eventType_handler import eventType_handler
 from api.subscribe_handler import create_subscription_handler
 from api.availability_handler import availability_handler
 from api.logout_handler import  logout_handler
+from api.apointment_handler import create_appointment_handler, get_appointment_handler
 
 app = Flask(__name__)
 app.config.from_object(config)
@@ -25,3 +26,5 @@ app.register_blueprint(logout_handler)
 app.register_blueprint(eventType_handler,url_prefix='/event-types')
 app.register_blueprint(create_subscription_handler)
 app.register_blueprint(availability_handler)
+app.register_blueprint(create_appointment_handler)
+app.register_blueprint(get_appointment_handler)
