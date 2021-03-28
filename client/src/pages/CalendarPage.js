@@ -172,6 +172,9 @@ export default function CalendarPage() {
         setSelectedTime(e.target.id.replace(/-/, ":"))
     }
 
+    const displayDate = moment(selectedDay).format("dddd, MMMM D");
+
+
     const TimeSlots = (start, end) => {
         var start = moment(start, "HH:mm");
         var end = moment(end, "HH:mm");
@@ -298,7 +301,8 @@ export default function CalendarPage() {
                     </Grid>
                     <Grid item md={4} className={classes.colRight}>
                         <Typography variant="subtitle1" className={classes.dateRight}>
-                            Wednesday,Februry 12
+                            {/* Wednesday,Februry 12 */}
+                            {displayDate}
                             </Typography>
                         <Paper className={classes.timeContainer} elevation={0}>
                             {listTime}

@@ -11,7 +11,7 @@ import calendar
 availability_handler = Blueprint('availability_handler', __name__)
 
 @availability_handler.route("/availability/<int:id>", methods=["GET"])
-# @check_token
+@check_token
 def get_calendar_availability(id):
     user = Users.query.filter_by(id=id).first()
     dayStart = user.available_time.split(',')[0]
