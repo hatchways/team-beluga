@@ -10,8 +10,10 @@ import { UserContextProvider } from "./globals/UserContext";
 import StripeCheckout from "./pages/StripeCheckout";
 import Onboarding from "./pages/Onboarding";
 import { AlertContextProvider } from "./globals/AlertContext";
-import FlashAlert from './components/FlashAlert'
+import FlashAlert from './components/FlashAlert';
+import PrivateRoute from "./components/PrivateRoute";
 import "./App.css";
+
 
 function App() {
   
@@ -24,9 +26,9 @@ function App() {
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp} />
             <Route path="/calendar" component={CalendarPage} />
-            <Route exact path={["/", "/home", "/home/:page"]} component={Home} />
-            <Route exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
-            <Route exact path="/checkout" component={StripeCheckout} />
+            <PrivateRoute exact path={["/", "/home", "/home/:page"]} component={Home} />
+            <PrivateRoute exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
+            <PrivateRoute exact path="/checkout" component={StripeCheckout} />
           </BrowserRouter>
         </AlertContextProvider>
       </UserContextProvider>
