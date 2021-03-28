@@ -32,6 +32,10 @@ instance/
 
 #TODO add .env to your gitignore
 .env
+<<<<<<< HEAD
 ./server/.env
 ./client/.env
+=======
+/server/.env
+>>>>>>> 9385a4957affd09373dba460c99757df4e807f4d
 server/utils/auth/client_secrets.json
