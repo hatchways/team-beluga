@@ -184,7 +184,8 @@ export default function CalendarPage() {
     };
     
     useEffect(() => {
-        let userId = user.userId;
+        // let userId = user.userId;
+        let userId = 1;
         let status;
         fetch(`/availability/${userId}?ym=${currentMonth}`, {
             method: "GET",
@@ -215,7 +216,7 @@ export default function CalendarPage() {
     }, [currentMonth]);
 
     const listTime = times.map((time) => {
-        if (timePeriods.length === 0) {
+        if (timePeriods === null || timePeriods.length === 0 ) {
             return (
                 <Grid className={classes.timeBtnContainer}>
                     <Button variant="outlined"
@@ -226,7 +227,7 @@ export default function CalendarPage() {
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <EmailDialog />
+                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime} />
                 </Grid>
             );
         };
