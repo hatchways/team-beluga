@@ -1,8 +1,12 @@
-from config import JWT_SECRET_KEY, JWT_ACCESS_TOKEN_EXPIRES
+from config import JWT_SECRET_KEY
 import jwt
-
+import datetime
 
 def token_generator(userid):
+    # Set jwt token expiry to expire in 30min (can change to other values)
+    # Moved out of config so that users get a new expiry whenever they log out & log in
+    JWT_ACCESS_TOKEN_EXPIRES = datetime.datetime.utcnow()+datetime.timedelta(minutes=30)
+
     login_payload = {
         "user_id": userid,
         "exp": JWT_ACCESS_TOKEN_EXPIRES
