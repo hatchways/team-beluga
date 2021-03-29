@@ -97,25 +97,25 @@ function EventTypeCard(props) {
     const alertContext = useContext(AlertContext)
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText('calendapp.com/userurl/'+link)//need to change 'userurl' as fetched later
-        .then(() => {
-            alertContext.setAlertStatus({
-                isOpen:true,
-                message:"Copied: " + link,
-                type:"info"
-              })
-        }, () => {
-            alertContext.setAlertStatus({
-                isOpen:true,
-                message:"Fail to copy, Please copy manually",
-                type:"error"
-              })
-        });        
+        navigator.clipboard.writeText('calendapp.com/userurl/' + link)//need to change 'userurl' as fetched later
+            .then(() => {
+                alertContext.setAlertStatus({
+                    isOpen: true,
+                    message: "Copied: " + link,
+                    type: "info"
+                })
+            }, () => {
+                alertContext.setAlertStatus({
+                    isOpen: true,
+                    message: "Fail to copy, Please copy manually",
+                    type: "error"
+                })
+            });
     };
     return (
         <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card className={classes.cardBody}>
-                <div className={classes.colorTag} style={{background: color}}></div>
+                <div className={classes.colorTag} style={{ background: color }}></div>
                 <CardHeader action={<SettingsOutlinedIcon
                     className={classes.settingIcon} />} />
                 <CardContent className={classes.cardText}>
@@ -170,17 +170,21 @@ export default function EventTypesTab() {
             })
             .catch(err => {
                 alertContext.setAlertStatus({
-                    isOpen:true,
-                    message:err.message,
-                    type:"error"
-                  })
+                    isOpen: true,
+                    message: err.message,
+                    type: "error"
+                })
             });
     }, []);
-    const cards = cardInfo.map((card) =>
-        <EventTypeCard key={card.id} url={card.url} title={card.title}
-            duration={card.duration} color={card.color}   
-        />
-    );
+    const cards = () => {
+        if (cardInfo !== []) return (
+            cardInfo.map((card) =>
+                <EventTypeCard key={card.id} url={card.url} title={card.title}
+                    duration={card.duration} color={card.color}
+                />
+            )
+        )
+    }
     // need to add useEffect of fetching user info {name, url, photo} & BE route later
     return (
         <div className={classes.tabBackgorund}>

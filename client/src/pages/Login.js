@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
@@ -64,6 +64,12 @@ function Login() {
     const history = useHistory();
     const user = useContext(UserContext);
     const alertContext = useContext(AlertContext)
+
+    useEffect(() => {
+        if (user.userId !== ""){
+            history.push("/home");
+        }
+    }, [user.userId])
 
     const responseGoogle = (response) => {
         let status;
