@@ -176,19 +176,18 @@ export default function CalendarPage() {
 
 
     const TimeSlots = (start, end) => {
-        var start = moment(start, "HH:mm");
-        var end = moment(end, "HH:mm");
-        let times = [];
-        while (start < end) {
-            times.push(start.format("HH:mm"));
-            start.add(30, 'minutes')
+        const timeStart = moment(start, "HH:mm");
+        const timeEnd = moment(end, "HH:mm");
+        const times = [];
+        while (timeStart < timeEnd) {
+            times.push(timeStart.format("HH:mm"));
+            timeStart.add(30, 'minutes')
         };
         setTimes(times)
     };
     
     useEffect(() => {
-        // let userId = user.userId;
-        let userId = 1;
+        const userId = user.userId;
         let status;
         fetch(`/availability/${userId}?ym=${currentMonth}`, {
             method: "GET",
