@@ -210,7 +210,7 @@ export default function EventTypesTab() {
                 </Grid>
                 <Grid item container direction="row" justify="flex-start"
                     alignItems="flex-start">
-                    {cards}
+                    {cards()}
                 </Grid>
                 <Grid item container direction="column" align="right" className={classes.footer}>
                     <Button variant="contained" color="primary" className={classes.startGuideBtn}>

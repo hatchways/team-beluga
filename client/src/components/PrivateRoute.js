@@ -43,7 +43,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
     const Loading = () => {
         return (
-            <Grid container direction="row" justify="center" alignItem="center"
+            <Grid container direction="row" justify="center" alignItems="center"
                 className={classes.loadingContainer}
             >
                 <CircularProgress disableShrink />
