@@ -187,7 +187,8 @@ export default function CalendarPage() {
     };
     
     useEffect(() => {
-        const userId = user.userId;
+        // const userId = user.userId;
+        let userId = 1;
         let status;
         fetch(`/availability/${userId}?ym=${currentMonth}`, {
             method: "GET",
@@ -220,12 +221,13 @@ export default function CalendarPage() {
     const listTime = times.map((time) => {
         if (timePeriods === null || timePeriods.length === 0 ) {
             return (
-                <Grid className={classes.timeBtnContainer}>
+                <Grid className={classes.timeBtnContainer}
+                    key={moment(selectedDay).format("YYYY-MM-DD") + time.replace(/:/, "-")}
+                >
                     <Button variant="outlined"
                         className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""
                             }`}
-                        onClick={handleClickTime} id={time.replace(/:/, "-")}
-                        key={moment(selectedDay).format("YYYY-MM-DD") + time.replace(/:/, "-")}
+                        onClick={handleClickTime} id={time.replace(/:/, "-")}                        
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
