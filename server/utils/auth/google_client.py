@@ -9,7 +9,7 @@ from datetime import timedelta
 
 class GoogleClient:
 
-    def __init__(self,google_auth_code=None,access_token=None,refresh_token=None,create_eventType=False):
+    def __init__(self,google_auth_code=None,access_token=None,refresh_token=None):
 
         if google_auth_code:  
             self.credentials = self.oauth(google_auth_code)
@@ -17,14 +17,12 @@ class GoogleClient:
         # For offline use 
         elif access_token and refresh_token:
             self.credentials = Credentials(
-                access_token,
-                refresh_token = refresh_token,
+                token=access_token,
+                refresh_token=refresh_token,
                 token_uri=GOOGLE_TOKEN_URL,
                 client_id=GOOGLE_CLIENT_ID,
                 client_secret=GOOGLE_CLIENT_SECRET
             )
-        elif create_eventType:
-            pass
         else:
             raise Exception("GOOGLE CLIENT INITIALIZE ERROR: please enter either Google auth code or user access token with refresh token")
 
@@ -93,6 +91,7 @@ class GoogleClient:
 
     def create_event_type(self, duration, title, start_time, timezone, host_email, booker_email):
         end_time = (dateutil.parser.isoparse(start_time) + timedelta(minutes=duration)).isoformat()
+        print(start_time, end_time)
         '2021-03-30T08:24:31.205241Z'
         event = {
             'summary': 'Appointment with CalendApp',
@@ -105,22 +104,22 @@ class GoogleClient:
                 'dateTime': end_time,
                 'timeZone': timezone,
             },
-            'recurrence': [
-                'RRULE:FREQ=DAILY;COUNT=2'
-            ],
+            # 'recurrence': [
+            #     'RRULE:FREQ=DAILY;COUNT=2'
+            # ],
             'attendees': [
                 {'email': host_email},
                 {'email': booker_email},
             ],
-            'reminders': {
-                'useDefault': False,
-                'overrides': [
-                    {'method': 'email', 'minutes': 24 * 60},
-                    {'method': 'popup', 'minutes': 10},
-                ],
-            },
+            # 'reminders': {
+            #     'useDefault': False,
+            #     'overrides': [
+            #         {'method': 'email', 'minutes': 24 * 60},
+            #         {'method': 'popup', 'minutes': 10},
+            #     ],
+            # },
         }
 
-        event_service = build('calendar', 'v3')
+        event_service = build('calendar', 'v3', credentials=self.credentials)
         event = event_service.events().insert(calendarId='primary', body=event).execute()
         print('Event created: %s' % (event.get('htmlLink')))

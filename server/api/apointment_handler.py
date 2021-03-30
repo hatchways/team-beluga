@@ -11,7 +11,7 @@ appointment_handler = Blueprint('appointment_handler', __name__)
 
 
 @appointment_handler.route('/appointment/create', methods=['POST'])
-@check_token
+#@check_token
 def create_appointment():
     data = json.loads(request.get_data())
     name = data.get('name')
@@ -36,6 +36,23 @@ def create_appointment():
 
     eventType = EventTypes.query.filter_by(url=url).first()
     eventType_id = eventType.id
+    duration = eventType.duration
+    title = eventType.title
+    user = Users.query.filter_by(id=eventType.user_id).first()
+    host_email = user.email
+
+    google_client = GoogleClient(access_token=user.access_token, refresh_token=user.refresh_token)
+    try:
+        google_client.create_event_type(
+            duration=duration,
+            title=title,
+            start_time=time,
+            timezone=timezone,
+            host_email=host_email,
+            booker_email=email)
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False, 'msg': 'Appointment Failed to Book'}), 400
 
     appointment = Appointments(
         eventType_id=eventType_id,
@@ -49,22 +66,6 @@ def create_appointment():
         db.session.commit()
     except:
         return jsonify({'success': False, 'msg': 'Failed to record'}), 500
-
-    duration = eventType.duration
-    title = eventType.title
-    host_email = Users.query.filter_by(id=eventType.user_id)
-    google_client = GoogleClient(create_eventType=True)
-    try:
-        google_client.create_event_type(
-            duration=duration,
-            title=title,
-            start_time=time,
-            timezone=timezone,
-            host_email=host_email,
-            booker_email=email)
-    except Exception as e:
-        print(e)
-        return jsonify({'success': False, 'msg': 'Appointment Failed to Book'}), 400
 
     return jsonify({'success': True, 'msg': 'Appointment Booked'}), 200
 
