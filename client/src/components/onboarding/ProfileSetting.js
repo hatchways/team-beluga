@@ -8,7 +8,8 @@ import moment from 'moment-timezone';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import { useHistory } from 'react-router-dom';
-import {AlertContext} from '../../globals/AlertContext';
+import { AlertContext } from '../../globals/AlertContext';
+import { UserContext } from '../../globals/UserContext';
 
 
 const useStyles = makeStyles({
@@ -45,6 +46,10 @@ function ProfileSetting({setters}) {
 
     const alertContext = useContext(AlertContext)
 
+    const userContext = useContext(UserContext)
+
+    const user_id = userContext.userId
+
     const clickHandler = () => {
         let status=0;
         if (url === "") {
@@ -55,12 +60,16 @@ function ProfileSetting({setters}) {
                 })    
         }
         else{
-            fetch(`/user/${url}/event-type`, {
-                method: "GET",
+            fetch(`/user/${user_id}/profile-setting`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                credentials:"include"
+                credentials:"include",
+                body: JSON.stringify({
+                    url: url,
+                    timezone:timezone
+                })
             })
             .then(res => {
                     status = res.status;
@@ -69,10 +78,8 @@ function ProfileSetting({setters}) {
             })
             .then(res => {
                     if (status === 200) {
-                        if (res.unique === true) {
-                            // Store url in backend  
-                            history.push("/onboarding/calendar-confirm")
-                            return                    
+                        if (res.unique === true) { 
+                            return history.push("/onboarding/calendar-confirm")                      
                         }
                         
                         alertContext.setAlertStatus({
@@ -80,6 +87,7 @@ function ProfileSetting({setters}) {
                             message:"URL already exist",
                             type:"error"
                             })   
+                        return 
                     };
                     throw Error("Failed to check URL");                
             })
@@ -100,7 +108,7 @@ function ProfileSetting({setters}) {
 
     const [timezone,setTimezone] = useState(moment.tz.guess())
 
-    const handleChange = (event)=>{
+    const handleTimezoneChange = (event)=>{
         setTimezone(event.target.value)
     }
 
@@ -142,7 +150,7 @@ function ProfileSetting({setters}) {
                     </Grid>
 
                     <Grid item xs={5}>
-                        <DropdownSelect defaultValue={timezone} handler={handleChange} options={timezones}></DropdownSelect>
+                        <DropdownSelect defaultValue={timezone} handler={handleTimezoneChange} options={timezones}></DropdownSelect>
                     </Grid>
                 </Grid>
             </Grid>

@@ -1,4 +1,4 @@
-import React, {useEffect, useContext} from "react";
+import React, {useEffect, useContext, useState} from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
 import Checkbox from '@material-ui/core/Checkbox';
@@ -8,6 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import DropdownSelect from '../DropdownSelect';
 import { useHistory } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import { UserContext } from '../../globals/UserContext';
 import {AlertContext} from '../../globals/AlertContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -47,10 +48,48 @@ for (let i = 0; i <= 23; i++) {
     );
 }
 
-
-function CheckBox() {
+function CheckBox({days,handler}) {
 
     const classes = useStyles();
+
+    return (
+        <FormGroup row>
+            {days.map((date,index)=>(
+                <FormControlLabel
+                key={date.id}
+                value={index}
+                checked={date.state}
+                control={<Checkbox  color="primary"/>}
+                label={<Typography variant="subtitle2" className={classes.checkBoxText}>{date.value}</Typography>}
+                labelPlacement="bottom"
+                onChange={handler}
+                classes={{root:classes.checkBox}}
+                style={{color:date.color}}
+                />
+            ))}
+        </FormGroup>
+    )
+}
+
+function UserAvailability({setters}) {
+
+    const classes = useStyles();
+
+    const alertContext = useContext(AlertContext)
+
+    const userContext = useContext(UserContext)
+    
+    const [startTime,setStartTime] = useState(9)
+
+    const [endTime,setEndTime] = useState(17)
+
+    const handleStartTimeChange = (event) => {
+        setStartTime(event.target.value)
+    }
+
+    const handleEndTimeChange = (event) => {
+        setEndTime(event.target.value)
+    }
 
     const [days,setDays] = React.useState([
         {
@@ -113,43 +152,6 @@ function CheckBox() {
         })
     }
 
-    return (
-        <FormGroup row>
-            {days.map((date,index)=>(
-                <FormControlLabel
-                key={date.id}
-                value={index}
-                checked={date.state}
-                control={<Checkbox  color="primary"/>}
-                label={<Typography variant="subtitle2" className={classes.checkBoxText}>{date.value}</Typography>}
-                labelPlacement="bottom"
-                onChange={toggleCheckbox}
-                classes={{root:classes.checkBox}}
-                style={{color:date.color}}
-                />
-            ))}
-        </FormGroup>
-    )
-}
-
-function UserAvailability({setters}) {
-
-    const classes = useStyles();
-
-    const alertContext = useContext(AlertContext)
-    
-    const [startTime,setStartTime] = React.useState(9)
-
-    const [endTime,setEndTime] = React.useState(17)
-
-    const handleStartTimeChange = (event) => {
-        setStartTime(event.target.value)
-    }
-
-    const handleEndTimeChange = (event) => {
-        setEndTime(event.target.value)
-    }
-
     useEffect( ()=>{
         setters.setTitle("Set your availability!")
         setters.setActiveStep(3)
@@ -158,15 +160,69 @@ function UserAvailability({setters}) {
     const history = useHistory();
 
     const clickHandler = () => {
-        history.push("/home")
-        alertContext.setAlertStatus({
-            isOpen:true,
-            message:"Profile created!",
-            type:"success"
-            })    
+
+        const availableDays = days.filter(day => day.state)
+
+        let status=0;
+
+        try {
+            if (startTime === "" || endTime === "") {
+                throw Error("Available time cannot be empty")  
+            }
+            else if (startTime >= endTime) {
+                throw Error("Start time must be earlier than end time")    
+            } 
+            else if (availableDays.length === 0) {
+                throw Error("Must select at least one available date")    
+            }
+            else{
+                fetch(`/user/${userContext.userId}/availability`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials:"include",
+                    body: JSON.stringify({
+                        start_time:startTime,
+                        end_time:endTime,
+                        available_days:availableDays.map(day => day.value).join(",")
+                    })
+                })
+                .then(res => {
+                        status = res.status;
+                        if (status < 500) return res.json();
+                        else throw Error("Server error");
+                })
+                .then(res => {
+                        if (status === 200) {
+                            if (res.success === true) { 
+                                alertContext.setAlertStatus({
+                                    isOpen:true,
+                                    message:"Profile created!",
+                                    type:"success"
+                                    })  
+                                history.push("/home")                    
+                            }
+                        }
+                        else throw Error("Server error");                
+                })
+                .catch(err => {
+                    alertContext.setAlertStatus({
+                        isOpen:true,
+                        message:err.message,
+                        type:"error"
+                        })    
+                });
+            }
+        }
+        catch(err) {
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                    })    
+        };
     }
-
-
 
     return (
         <Grid container item xs={12}>
@@ -192,7 +248,7 @@ function UserAvailability({setters}) {
                     <Grid item xs={12} style={{marginBottom:10}}>
                         <Typography variant="subtitle2">Available Days:</Typography>
                     </Grid>
-                    <CheckBox />
+                    <CheckBox days={days} handler={toggleCheckbox}/>
                 </Grid>
             </Grid>
 

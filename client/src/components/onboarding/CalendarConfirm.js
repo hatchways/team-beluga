@@ -1,10 +1,12 @@
-import React, {useEffect} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography'; 
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
+import { UserContext } from '../../globals/UserContext';
+import { AlertContext } from '../../globals/AlertContext';
 
 const useStyles =  makeStyles({
     header: {
@@ -26,13 +28,43 @@ const useStyles =  makeStyles({
 function CalendarConfirm({setters}) {
 
     const classes = useStyles();
-    const email = "fake@gmail.com"
+    const [email,setEmail] = useState("")
+
+    const userContext = useContext(UserContext)
+
+    const alertContext = useContext(AlertContext)
+    const user_id = userContext.userId
 
     useEffect( ()=>{
-        setters.setTitle("Your Google Calendar is connected!!")
+        setters.setTitle("Your Google calendar is connected!")
         setters.setActiveStep(2)
+        let status=200
+        fetch(`/user/${user_id}/email`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials:"include"
+            })
+            .then((res) => {
+                status = res.status
+                if (status < 500)
+                    return res.json()
+                else throw Error("Server error");
+            })
+            .then((data) => {
+                if (status === 200)
+                    setEmail(data.email)
+                else throw Error("User email not set");
+            })
+            .catch(err => {
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                    })    
+            });
     },[setters])
-
 
     const history = useHistory();
 
