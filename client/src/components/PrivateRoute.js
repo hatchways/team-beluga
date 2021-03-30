@@ -37,6 +37,8 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
             })
             .catch(err => {
                 user.setUserId("");
+                user.setIsSubscribed(false)
+                user.setUserEmail("")
                 return setLogin(false)
             });
     }, [])

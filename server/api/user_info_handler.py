@@ -49,7 +49,6 @@ def update_user_info(id):
 @user_info_handler.route('/user/<int:id>/email', methods=['GET'])
 @check_token
 def get_user_email(id):
-    # Save url & timezone
     email = Users.query.get(id).email
     if email:
         return jsonify({'success': True, 'email': email}), 200
