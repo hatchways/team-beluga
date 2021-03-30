@@ -62,9 +62,15 @@ const useStyles = makeStyles((theme) => ({
             }            
         },
         '& .react-calendar__tile--now': {
-            background: theme.palette.primary.main,
+            background: theme.palette.primary.light,
             color: '#fff'
         },
+        '& .react-calendar__tile--active': {
+            background: theme.palette.primary.main
+        },
+        '& .react-calendar__tile--active:enabled:hover, .react-calendar__tile--active:enabled:focus': {
+            background: theme.palette.primary.main
+        },        
         '& .react-calendar__tile:disabled': {
             background: 'none'
         },
@@ -78,7 +84,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CalendarWidget(props){
     const classes = useStyles();
-    const {minDate} = props;
     return(
         <Calendar
             locale={'en'}
@@ -86,6 +91,8 @@ export default function CalendarWidget(props){
             minDate={props.minDate}
             maxDetail={'month'}
             minDetail={'month'}
+            onClickDay={props.handleClickDay}
+            value={props.selectedDay}
         ></Calendar>
     )
 }
