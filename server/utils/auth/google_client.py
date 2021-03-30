@@ -91,8 +91,6 @@ class GoogleClient:
 
     def create_event_type(self, duration, title, start_time, timezone, host_email, booker_email):
         end_time = (dateutil.parser.isoparse(start_time) + timedelta(minutes=duration)).isoformat()
-        print(start_time, end_time)
-        '2021-03-30T08:24:31.205241Z'
         event = {
             'summary': 'Appointment with CalendApp',
             'description': title,
@@ -104,22 +102,22 @@ class GoogleClient:
                 'dateTime': end_time,
                 'timeZone': timezone,
             },
-            # 'recurrence': [
-            #     'RRULE:FREQ=DAILY;COUNT=2'
-            # ],
+            'recurrence': [
+                'RRULE:FREQ=DAILY;COUNT=1'
+            ],
             'attendees': [
                 {'email': host_email},
                 {'email': booker_email},
             ],
-            # 'reminders': {
-            #     'useDefault': False,
-            #     'overrides': [
-            #         {'method': 'email', 'minutes': 24 * 60},
-            #         {'method': 'popup', 'minutes': 10},
-            #     ],
-            # },
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            },
         }
 
         event_service = build('calendar', 'v3', credentials=self.credentials)
         event = event_service.events().insert(calendarId='primary', body=event).execute()
-        print('Event created: %s' % (event.get('htmlLink')))
+        # print('Event created: %s' % (event.get('htmlLink')))
