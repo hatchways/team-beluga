@@ -70,7 +70,6 @@ class Appointments(db.Model):
     email = db.Column(db.String(64), nullable=False)
     time = db.Column(db.DateTime, nullable=False)
     timezone = db.Column(db.String(64), nullable=False)
-    user = db.relationship('Users', backref='appointment')
 
     def __init__(self, eventType_id, name, email, time, timezone):
         self.eventType_id = eventType_id
@@ -80,7 +79,7 @@ class Appointments(db.Model):
         self.timezone = timezone
 
     def __repr__(self):
-        return f"Appointment - id:{self.id}, eventType_id:{self.event_id}, " \
+        return f"Appointment - id:{self.id}, eventType_id:{self.eventType_id}, " \
                f"name:{self.name}, email:{self.email}, time:{self.time}, timezone:{self.timezone}"
 
     def to_dict(self):

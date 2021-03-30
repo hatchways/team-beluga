@@ -4,10 +4,12 @@ from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
 from config import GOOGLE_REDIRECT_URL,GOOGLE_CLIENT_SCOPE, GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET, GOOGLE_TOKEN_URL
 import os
+import dateutil.parser
+from datetime import timedelta
 
 class GoogleClient:
 
-    def __init__(self,google_auth_code=None,access_token=None,refresh_token=None):
+    def __init__(self,google_auth_code=None,access_token=None,refresh_token=None,create_eventType=False):
 
         if google_auth_code:  
             self.credentials = self.oauth(google_auth_code)
@@ -21,6 +23,8 @@ class GoogleClient:
                 client_id=GOOGLE_CLIENT_ID,
                 client_secret=GOOGLE_CLIENT_SECRET
             )
+        elif create_eventType:
+            pass
         else:
             raise Exception("GOOGLE CLIENT INITIALIZE ERROR: please enter either Google auth code or user access token with refresh token")
 
@@ -86,3 +90,37 @@ class GoogleClient:
 
         except Exception as e:
             print(e)
+
+    def create_event_type(self, duration, title, start_time, timezone, host_email, booker_email):
+        end_time = (dateutil.parser.isoparse(start_time) + timedelta(minutes=duration)).isoformat()
+        '2021-03-30T08:24:31.205241Z'
+        event = {
+            'summary': 'Appointment with CalendApp',
+            'description': title,
+            'start': {
+                'dateTime': start_time,
+                'timeZone': timezone,
+            },
+            'end': {
+                'dateTime': end_time,
+                'timeZone': timezone,
+            },
+            'recurrence': [
+                'RRULE:FREQ=DAILY;COUNT=2'
+            ],
+            'attendees': [
+                {'email': host_email},
+                {'email': booker_email},
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            },
+        }
+
+        event_service = build('calendar', 'v3')
+        event = event_service.events().insert(calendarId='primary', body=event).execute()
+        print('Event created: %s' % (event.get('htmlLink')))

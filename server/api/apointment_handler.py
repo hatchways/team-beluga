@@ -1,27 +1,28 @@
 from flask import jsonify, Blueprint, request
 import json
-from model.model import Users, Appointments
+from model.model import Users, EventTypes, Appointments
 from config import db
 from utils.auth.middleware import check_token
 import dateutil
 import re
+from utils.auth.google_client import GoogleClient
 
-create_appointment_handler = Blueprint('create_appointment_handler', __name__)
-get_appointment_handler = Blueprint('get_appointment_handler', __name__)
+appointment_handler = Blueprint('appointment_handler', __name__)
 
 
-@create_appointment_handler.route('/appointment/create', methods=['POST'])
+@appointment_handler.route('/appointment/create', methods=['POST'])
 @check_token
-def create_appointment(user_id):
+def create_appointment():
     data = json.loads(request.get_data())
+    name = data.get('name')
     time = data.get('dateTime')
     email = data.get('email')
     timezone = data.get('timezone')
-    # TODO: get related eventType id/url
+    url = data.get('url')
 
-    if time is None or email is None or timezone is None:
+    if name is None or time is None or email is None or timezone is None:
         return jsonify({'success': False, 'msg': 'Missing field(s)'}), 400
-    if time == "" or email == "" or timezone == "":
+    if name == "" or time == "" or email == "" or timezone == "":
         return jsonify({'success': False, 'msg': 'Empty field(s)'}), 400
 
     regex = """^(\w|\.|\_|\-)+[@](\w|\_|\-|\.)+[.]\w{2,3}$"""
@@ -33,11 +34,11 @@ def create_appointment(user_id):
     except:
         return jsonify({'success': False, 'msg': 'Invalid datetime'}), 400
 
-    user = Users.query.filter_by(id=user_id).first()
-    name = user.name  # need clarify if this name come from FE or the name in DB
+    eventType = EventTypes.query.filter_by(url=url).first()
+    eventType_id = eventType.id
 
     appointment = Appointments(
-        eventType_id="",  # need eventType id
+        eventType_id=eventType_id,
         name=name,
         email=email,
         time=time,
@@ -48,14 +49,31 @@ def create_appointment(user_id):
         db.session.commit()
     except:
         return jsonify({'success': False, 'msg': 'Failed to record'}), 500
+
+    duration = eventType.duration
+    title = eventType.title
+    host_email = Users.query.filter_by(id=eventType.user_id)
+    google_client = GoogleClient(create_eventType=True)
+    try:
+        google_client.create_event_type(
+            duration=duration,
+            title=title,
+            start_time=time,
+            timezone=timezone,
+            host_email=host_email,
+            booker_email=email)
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False, 'msg': 'Appointment Failed to Book'}), 400
+
     return jsonify({'success': True, 'msg': 'Appointment Booked'}), 200
 
 
-@get_appointment_handler.route('/appointment/<uid>', methods=['GET'])
+@appointment_handler.route('/appointment/<uid>', methods=['GET'])
 @check_token
 def get_appointment(uid):
-    user = Users.query.filter_by(id=uid).first()
-    all_appointments = Appointments.query.filter(Appointments.user == user)
+    all_appointments = db.session.query(Appointments).join(EventTypes)\
+        .filter(EventTypes.id == uid).all()
     return jsonify([appointments.to_dict() for appointments in all_appointments])
 
 

@@ -15,5 +15,5 @@ def check_token(func):
         user_id = token_decoder(token)['user_id']
         if Users.query.filter_by(id=user_id).first() is None:
             return jsonify({'success': False, 'msg': 'Invalid Token'})
-        return func(user_id, *args, **kwargs)
+        return func(*args, **kwargs)
     return wrapped
