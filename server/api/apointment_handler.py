@@ -61,8 +61,8 @@ def create_appointment():
         name=name,
         email=email,
         time=time,
-        timezone=timezone
-        # TODO add <event_id=event_id> here later
+        timezone=timezone,
+        google_event_id=event_id
     )
     db.session.add(appointment)
     try:
