@@ -39,9 +39,9 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const navLinks = [
-  { id:1, title: 'Home', path: '' },
-  { id:2, title: 'Integration', path: '' },
-  { id:3, title: 'Upgrade account', path: '' },
+  { id:1, title: 'Home', path: '/' },
+  { id:2, title: 'Integration', path: '#' },
+  { id:3, title: 'Upgrade account', path: '/Upgrade' },
 ]
 
 function Header() {

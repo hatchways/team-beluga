@@ -33,7 +33,7 @@ def googlesignup():
             db.session.commit()
             uid = Users.query.filter_by(google_id=userid).first().id
             token = token_generator(uid)
-            ret = jsonify({'response': 'Signup success', 'id': uid})
+            ret = jsonify({'response': 'Signup success', 'id': uid, 'userEmail':email})
             ret.set_cookie("token",token, httponly = True)
             return ret,200
         return jsonify({'response': 'You have already signed up. Please Log In'}), 409

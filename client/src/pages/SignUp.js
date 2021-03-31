@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CardActions from '@material-ui/core/CardActions';
@@ -67,8 +67,13 @@ function Signup() {
     
     const history = useHistory();
     const user = useContext(UserContext);
+    const alertContext = useContext(AlertContext);
 
-    const alertContext = useContext(AlertContext)
+    useEffect(() => {
+        if (user.userId !== ""){
+            history.push("/home");
+        }
+    }, [user.userId])
 
     const responseGoogle = (response) => {
       
@@ -94,6 +99,8 @@ function Signup() {
                         type:"success"
                       })
                     user.setUserId(res.id);
+                    user.setIsSubscribed(false)
+                    user.setUserEmail(res.userEmail)
                     history.push("/onboarding/profile-settings");
                 } else {
                     if (status === 401) {

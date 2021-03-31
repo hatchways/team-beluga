@@ -2,6 +2,7 @@ from flask import jsonify, Blueprint, request, make_response
 from utils.auth.google_client import GoogleClient
 import json
 from utils.auth.token_generator import token_generator
+from api.subscribe_handler import check_subscription
 from model.model import Users
 from config import db
 
@@ -25,12 +26,16 @@ def googlelogin():
             user_db.refresh_token = user_info.get('refresh_token')
             db.session.commit()
             
+            subscription_status,subscription = check_subscription(user_db.email)
+
             ret = jsonify({'response': 'Login success', 
                             'id': uid,
                             'user_url': user_db.url,
                             'user_timezone': user_db.timezone,
                             'user_available_day': user_db.available_day,
-                            'user_available_time': user_db.available_time
+                            'user_available_time': user_db.available_time,
+                            'isSubscribed': subscription_status,
+                            'userEmail':user_db.email
                             })
             ret.set_cookie("token", token, httponly = True)
             return ret,200

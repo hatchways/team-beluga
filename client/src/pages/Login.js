@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Link, useHistory } from 'react-router-dom';
 import Grid from '@material-ui/core/Grid';
@@ -65,6 +65,12 @@ function Login() {
     const user = useContext(UserContext);
     const alertContext = useContext(AlertContext)
 
+    useEffect(() => {
+        if (user.userId !== ""){
+            history.push("/home");
+        }
+    }, [user.userId])
+
     const responseGoogle = (response) => {
         let status;
         fetch("/googlelogin", {
@@ -90,6 +96,8 @@ function Login() {
                         type:"success"
                       })
                     user.setUserId(res.id);
+                    user.setIsSubscribed(res.isSubscribed)
+                    user.setUserEmail(res.userEmail)
                     
                     if (res.user_url.length === 0 || res.user_timezone.length === 0)
                         history.push("/onboarding/profile-settings");

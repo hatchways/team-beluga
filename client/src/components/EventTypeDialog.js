@@ -84,7 +84,9 @@ export default function EventTypeDialog() {
         setColor('#'+color.hex)
     };
 
-    const userId = useContext(UserContext).userId;
+    const userContext = useContext(UserContext)
+    const userId = userContext.userId
+    const userEmail = userContext.userEmail
 
     const handleConfirm = () => {
         if (title===''||duration===''||url===''||color==='') {
@@ -105,6 +107,7 @@ export default function EventTypeDialog() {
                 credentials: "include",
                 body: JSON.stringify({
                     user_id: userId,
+                    user_email:userEmail,
                     title: title,
                     url: url,
                     duration: duration,
@@ -117,15 +120,15 @@ export default function EventTypeDialog() {
                     else throw Error("Server error");
                 })
                 .then(res => {
-                    if (status === 200) {
+                    if (status === 200 && res.success) {
                         alertContext.setAlertStatus({        //might need to change after discuss
                             isOpen:true,
-                            message:res.success,
+                            message:res.response,
                             type:"success"
                         })
                         setOpen(false);
                     }
-                    else throw Error("Fail to fetch data");
+                    else throw Error(res.response);
                 })
                 .catch(err => {                             //might need to change after discuss
                     alertContext.setAlertStatus({
