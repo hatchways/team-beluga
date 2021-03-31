@@ -118,7 +118,7 @@ function Login() {
             if (user.onboardingStep === 1)
                 return <Redirect to="/onboarding/profile-settings"/>
 
-            if (user.onboardingStep === 2)
+            if (user.onboardingStep === 3)
                 return <Redirect to="/onboarding/availability"/>    
             
             return <Redirect to="/home"/> 

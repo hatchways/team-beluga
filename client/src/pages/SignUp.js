@@ -94,7 +94,7 @@ function Signup() {
                     user.setUserId(res.id);
                     user.setIsSubscribed(false)
                     user.setUserEmail(res.userEmail)
-                    user.setOnboardingStep(0)
+                    user.setOnboardingStep(1)
                 } else {
                     if (status === 401) {
                         alertContext.setAlertStatus({
@@ -128,6 +128,9 @@ function Signup() {
         if (user.userId !== "") {
             if (user.onboardingStep === 1)
                 return <Redirect to="/onboarding/profile-settings"/> 
+
+            if (user.onboardingStep === 3)
+                return <Redirect to="/onboarding/availability"/> 
 
             return <Redirect to="/home"/> 
         }

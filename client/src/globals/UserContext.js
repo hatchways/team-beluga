@@ -41,11 +41,12 @@ export const UserContextProvider = (props) => {
             })
             .then(res => {
                 if (status === 200 && res.success === true) {
-                    setIsComplete(true)
                     setIsSubscribed(res.isSubscribed)
                     setOnboardingStep(res.onboardingStep)
                     setUserEmail(res.userEmail)
-                    return setUserId(res.userId);
+                    setUserId(res.userId);
+                    setIsComplete(true)
+                    return
                 }
                 throw Error("error");
             })

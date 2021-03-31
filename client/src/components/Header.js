@@ -81,9 +81,10 @@ function Header() {
             type:"success"
             })   
           setAnchorEl(null)
-          userContext.setUserId("")
           userContext.setIsSubscribed(false)
           userContext.setUserEmail("")
+          userContext.setOnboardingStep(0)
+          userContext.setUserId("")
           history.push("/login")
         }
         else if (status === 400) {
