@@ -4,6 +4,8 @@ from google.auth.transport import requests
 from google.oauth2.credentials import Credentials
 from config import GOOGLE_REDIRECT_URL,GOOGLE_CLIENT_SCOPE, GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET, GOOGLE_TOKEN_URL
 import os
+import dateutil.parser
+from datetime import timedelta
 
 class GoogleClient:
 
@@ -15,8 +17,8 @@ class GoogleClient:
         # For offline use 
         elif access_token and refresh_token:
             self.credentials = Credentials(
-                access_token,
-                refresh_token = refresh_token,
+                token=access_token,
+                refresh_token=refresh_token,
                 token_uri=GOOGLE_TOKEN_URL,
                 client_id=GOOGLE_CLIENT_ID,
                 client_secret=GOOGLE_CLIENT_SECRET
@@ -86,3 +88,36 @@ class GoogleClient:
 
         except Exception as e:
             print(e)
+
+    def create_event_type(self, duration, title, start_time, timezone, host_email, booker_email):
+        end_time = (dateutil.parser.isoparse(start_time) + timedelta(minutes=duration)).isoformat()
+        event = {
+            'summary': 'Appointment with CalendApp',
+            'description': title,
+            'start': {
+                'dateTime': start_time,
+                'timeZone': timezone,
+            },
+            'end': {
+                'dateTime': end_time,
+                'timeZone': timezone,
+            },
+            'recurrence': [
+                'RRULE:FREQ=DAILY;COUNT=1'
+            ],
+            'attendees': [
+                {'email': host_email},
+                {'email': booker_email},
+            ],
+            'reminders': {
+                'useDefault': False,
+                'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10},
+                ],
+            },
+        }
+
+        event_service = build('calendar', 'v3', credentials=self.credentials)
+        event = event_service.events().insert(calendarId='primary', body=event).execute()
+        # print('Event created: %s' % (event.get('htmlLink')))

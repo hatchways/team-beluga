@@ -4,6 +4,7 @@ import json
 from utils.auth.token_generator import token_generator
 from api.subscribe_handler import check_subscription
 from model.model import Users
+from config import db
 
 google_login_handler = Blueprint('google_login_handler', __name__)
 
@@ -21,6 +22,9 @@ def googlelogin():
             user_db = Users.query.filter_by(google_id=userid).first()
             uid = user_db.id
             token = token_generator(uid)
+            user_db.access_token = user_info.get('access_token')
+            user_db.refresh_token = user_info.get('refresh_token')
+            db.session.commit()
             
             subscription_status,subscription = check_subscription(user_db.email)
 

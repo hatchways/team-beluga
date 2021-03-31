@@ -79,5 +79,8 @@ class Appointments(db.Model):
         self.timezone = timezone
 
     def __repr__(self):
-        return f"Appointment - id:{self.id}, eventType_id:{self.event_id}, " \
+        return f"Appointment - id:{self.id}, eventType_id:{self.eventType_id}, " \
                f"name:{self.name}, email:{self.email}, time:{self.time}, timezone:{self.timezone}"
+
+    def to_dict(self):
+        return {column.name:getattr(self,column.name) for column in self.__table__.columns}
