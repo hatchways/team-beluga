@@ -14,6 +14,8 @@ availability_handler = Blueprint('availability_handler', __name__)
 @availability_handler.route("/availability/<url>", methods=["GET"])
 @check_token
 def get_calendar_availability(url):
+    if url is None or url == "":
+        return jsonify({'success': False, 'msg': 'Url is Empty'})
     uid = EventTypes.query.filter_by(url=url).first().user_id
     user = Users.query.filter_by(id=uid).first()
     dayStart = user.available_time.split(',')[0]
