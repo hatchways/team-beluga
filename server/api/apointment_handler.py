@@ -74,7 +74,7 @@ def create_appointment():
 @check_token
 def get_appointment(uid):
     all_appointments = db.session.query(Appointments).join(EventTypes)\
-        .filter(EventTypes.id == uid).all()
+        .filter(EventTypes.user_id == uid).all()
     return jsonify([appointments.to_dict() for appointments in all_appointments])
 
 
