@@ -5,7 +5,7 @@ import EnhancedTable from './ScheduledEventsTable';
 
 
 const useStyles = makeStyles((theme) => ({
-    tabBackgorund: {
+    tabBackground: {
         width: '100%',
         background: theme.palette.light.deepLight,
     },
@@ -22,7 +22,7 @@ export default function ScheduledEventsTab() {
     const classes = useStyles();
 
     return (
-        <div className={classes.tabBackgorund}>
+        <div className={classes.tabBackground}>
             <Grid container className={classes.tabBody}>
                 <EnhancedTable />
             </Grid>
