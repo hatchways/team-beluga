@@ -1,13 +1,14 @@
-import React, { useState,useContext,useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import CardSection from './CardSection';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
 import { AlertContext } from '../../globals/AlertContext';
 import { UserContext } from '../../globals/UserContext';
+import { useHistory } from 'react-router-dom';
 
 
-function stripeCheckoutHandler(result,email,alertContext) {
+function stripeCheckoutHandler(result,email,alertContext,history,stripe,userContext) {
 
     if (result.error) {
         alertContext.setAlertStatus({
@@ -16,6 +17,7 @@ function stripeCheckoutHandler(result,email,alertContext) {
             type:"error"
         })
     } else {
+        let status = 200
         fetch('/create-subscription', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -25,51 +27,57 @@ function stripeCheckoutHandler(result,email,alertContext) {
                 payment_method_id: result.paymentMethod.id,
                 email: email
             })
-        }).then(function (result) {
-            // Handle server response (see Step 4)
-            result.json().then(function (json) {
-                //handleServerResponse(json);
-            })
+        })
+        .then( res=> {
+                status = res.status
+                if (status < 500)
+                    return res.json()
+                throw Error("Server error")
+        })
+        .then(data => {
+            if (!data.success)
+                throw Error(data.message)
+            
+            // Check initial payment status
+            if (data.status === 'requires_action') {
+                stripe.confirmCardPayment(data.client_secret).then(res=>{
+                    if (result.error) {
+                        alertContext.setAlertStatus({
+                            isOpen:true,
+                            message:"The card was declined",
+                            type:"error"
+                            })    
+                    }
+                })
+                return history.push("/upgrade")
+            }
+
+            alertContext.setAlertStatus({
+                isOpen:true,
+                message:"Successfully subscribed",
+                type:"success"
+                })    
+            
+            userContext.setIsSubscribed(true)
+            
+            return history.push("/")
+        })
+        .catch(err => {
+            alertContext.setAlertStatus({
+                isOpen:true,
+                message:err.message,
+                type:"error"
+                })    
         });
     }
 }
 
-export default function CheckoutForm() {
+export default function CheckoutForm({email}) {
     const stripe = useStripe();
     const elements = useElements();
     const alertContext = useContext(AlertContext) 
     const userContext = useContext(UserContext)
-    const user_id = userContext.userId
-    const [email, setEmail] = useState("tofnag23@gmail.com")
-
-    useEffect( ()=>{
-        let status=200
-        fetch(`/user/${user_id}/email`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials:"include"
-            })
-            .then((res) => {
-                status = res.status
-                if (status < 500)
-                    return res.json()
-                else throw Error("Server error");
-            })
-            .then((data) => {
-                if (status === 200)
-                    setEmail(data.email)
-                else throw Error("User email not set");
-            })
-            .catch(err => {
-                alertContext.setAlertStatus({
-                    isOpen:true,
-                    message:err.message,
-                    type:"error"
-                    })    
-            });
-    },[])
+    const history = useHistory();
 
     const handleSubmit = async (event) => {
         // We don't want to let default form submission happen here,
@@ -90,7 +98,7 @@ export default function CheckoutForm() {
                 email: email
             },
         });
-        stripeCheckoutHandler(result,email,alertContext);
+        stripeCheckoutHandler(result,email,alertContext,history,stripe,userContext);
     };
 
     return (

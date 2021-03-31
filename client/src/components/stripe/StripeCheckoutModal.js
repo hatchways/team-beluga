@@ -8,11 +8,11 @@ import Modal from '../Modal';
 // recreating the `Stripe` object on every render.
 const stripePromise = loadStripe('pk_test_51IXw8jFSBPZAgVJd88jZ2iO1HikQ8m0ES4ugRNS73as3xGAJmhwxkrtOoXXSNNR53VmMJDHbygEFTUZw0v0HgyPb00KnZmyygb');
 
-function StripeCheckoutModal({open, handleClose}) {
+function StripeCheckoutModal({open, handleClose, email}) {
 
   return (
           <Elements stripe={stripePromise}>
-            <Modal title="Upgrade to premium" text="Enter your card details:" content={<CheckoutForm />} open={open} handleClose={handleClose}/>
+            <Modal title="Upgrade to premium" text="Enter your card details:" content={<CheckoutForm email={email}/>} open={open} handleClose={handleClose}/>
           </Elements>
   )
 }

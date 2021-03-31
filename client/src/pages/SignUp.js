@@ -99,6 +99,8 @@ function Signup() {
                         type:"success"
                       })
                     user.setUserId(res.id);
+                    user.setIsSubscribed(false)
+                    user.setUserEmail(res.userEmail)
                     history.push("/onboarding/profile-settings");
                 } else {
                     if (status === 401) {

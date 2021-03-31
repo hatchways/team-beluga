@@ -1,7 +1,8 @@
 from flask import jsonify, Blueprint, request
-from model.model import EventTypes
+from model.model import EventTypes,Users
 from config import db
 from utils.auth.middleware import check_token
+from api.subscribe_handler import check_subscription
 
 eventType_handler = Blueprint('eventType_handler', __name__)
 
@@ -23,10 +24,20 @@ def field_validation(data):
 @check_token
 def create_eventType():
     data = request.get_json()
+
+    isSubscribed,subscription = check_subscription(data.get("user_email"))
+
+    # Check if unsubscribed user went past event type limit
+    user = Users.query.filter_by(id=data.get("user_id")).first()
+
+    # Unsubscribed user can only have maximum 3 event types
+    if not isSubscribed and len(user.eventType) == 3:
+        return jsonify({"success":False,"response":"Unsubscribed users can only have 3 event types"})
+
     valid_fields,msg = field_validation(data)
 
     if not valid_fields:
-        return jsonify({"error":msg})
+        return jsonify({"success":False,"response":msg})
     
     new_eventType = EventTypes(
         user_id = data.get("user_id"),
@@ -39,9 +50,7 @@ def create_eventType():
     db.session.add(new_eventType)
     db.session.commit()
 
-    return jsonify({
-        "success":"Event type succesfully created!"
-    })
+    return jsonify({"success":True,"response":"Event type succesfully created!"})
 
 @eventType_handler.route('/',methods=["GET"])
 @check_token

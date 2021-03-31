@@ -96,6 +96,8 @@ function Login() {
                         type:"success"
                       })
                     user.setUserId(res.id);
+                    user.setIsSubscribed(res.isSubscribed)
+                    user.setUserEmail(res.userEmail)
                     
                     if (res.user_url.length === 0 || res.user_timezone.length === 0)
                         history.push("/onboarding/profile-settings");
