@@ -11,7 +11,7 @@ appointment_handler = Blueprint('appointment_handler', __name__)
 
 
 @appointment_handler.route('/appointment/create', methods=['POST'])
-#@check_token
+@check_token
 def create_appointment():
     data = json.loads(request.get_data())
     name = data.get('name')
@@ -43,7 +43,7 @@ def create_appointment():
 
     google_client = GoogleClient(access_token=user.access_token, refresh_token=user.refresh_token)
     try:
-        google_client.create_event_type(
+        event_id = google_client.create_event_type(
             duration=duration,
             title=title,
             start_time=time,
@@ -59,7 +59,8 @@ def create_appointment():
         name=name,
         email=email,
         time=time,
-        timezone=timezone
+        timezone=timezone,
+        google_event_id=event_id,
     )
     db.session.add(appointment)
     try:
@@ -78,4 +79,38 @@ def get_appointment(uid):
     return jsonify([appointments.to_dict() for appointments in all_appointments])
 
 
+def delete_one_appointment(user, appointment_id):
+    try:
+        appointment_to_delete = Appointments.query.filter_by(google_event_id=appointment_id).first()
 
+        if appointment_to_delete is None:
+            raise Exception("Appointment to delete not found")
+
+        google_client = GoogleClient(access_token=user.access_token, refresh_token=user.refresh_token)
+        google_client.delete_calendar_event(appointment_to_delete.google_event_id)
+
+        db.session.delete(appointment_to_delete)
+        db.session.commit()
+
+        return True
+    except Exception as e:
+        return False
+
+
+@appointment_handler.route('/appointment/<int:uid>', methods=['DELETE'])
+@check_token
+def delete_appointment(uid):
+    user = Users.query.filter_by(id=uid).first()
+    appointment_ids = request.get_json().get("ids")
+    if appointment_ids is None or appointment_ids == []:
+        return jsonify({'success': False, 'msg': 'Missing Field(s)'}), 400
+    for appointment_id in appointment_ids:
+        deleted = delete_one_appointment(user, appointment_id)
+        if not deleted:
+            return jsonify({'success': False, 'msg': 'Error in Deleting'}), 400
+    all_appointments = db.session.query(Appointments).join(EventTypes) \
+        .filter(EventTypes.user_id == uid).all()
+    return jsonify({'success': True,
+                    'msg': 'Successfully Deleted',
+                    'appointments': [appointments.to_dict() for appointments in all_appointments]
+                    }), 200

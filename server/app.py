@@ -9,7 +9,7 @@ from api.google_signup_handler import google_signup_handler
 from api.eventType_handler import eventType_handler
 from api.subscribe_handler import subscription_handler
 from api.availability_handler import availability_handler
-from api.apointment_handler import appointment_handler
+from api.appointment_handler import appointment_handler
 from api.logout_handler import logout_handler
 from api.jwt_check_handler import token_check_handler
 

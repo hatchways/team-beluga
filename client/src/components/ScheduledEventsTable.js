@@ -233,7 +233,7 @@ export default function EnhancedTable() {
     const rows = appointments.map((appointment) => { 
         return(
             createData(
-                appointment.id,
+                appointment.google_event_id,
                 appointment.name, 
                 appointment.email, 
                 new Date(appointment.time).toString()
@@ -251,17 +251,24 @@ export default function EnhancedTable() {
             },
             credentials: "include",
             body: JSON.stringify({
-                id: selected
+                ids: selected
             })
         })
             .then(res => {
                 status = res.status;
                 if (status < 500) return res.json();
-                else throw Error("Server error");
+                else throw Error(res.msg);
             })
             .then(res => {
-                if (status === 200) setAppointments(res)
-                else throw Error("Fail to fetch data");
+                if (status === 200) {
+                    setAppointments(res.appointments);
+                    alertContext.setAlertStatus({
+                        isOpen: true,
+                        message: res.msg,
+                        type: "success"
+                    })
+                }
+                else throw Error(res.msg);
             })
             .catch(err => {
                 alertContext.setAlertStatus({
