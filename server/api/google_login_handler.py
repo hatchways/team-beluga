@@ -28,14 +28,21 @@ def googlelogin():
             
             subscription_status,subscription = check_subscription(user_db.email)
 
+            # Default 0 means onboarding finished
+            onboarding_step = 0
+
+            # If user url or timezone is empty set step to 1
+            if (user_db.url == "" or user_db.timezone == ""):
+                onboarding_step = 1
+            # If availablilites are empty set step to 3
+            elif (user_db.available_day == "" or user_db.available_time == ""):
+                onboarding_step = 3
+
             ret = jsonify({'response': 'Login success', 
                             'id': uid,
-                            'user_url': user_db.url,
-                            'user_timezone': user_db.timezone,
-                            'user_available_day': user_db.available_day,
-                            'user_available_time': user_db.available_time,
                             'isSubscribed': subscription_status,
-                            'userEmail':user_db.email
+                            'userEmail':user_db.email,
+                            'onboardingStep':onboarding_step
                             })
             ret.set_cookie("token", token, httponly = True)
             return ret,200

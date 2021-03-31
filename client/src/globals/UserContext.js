@@ -21,9 +21,10 @@ export const UserContextProvider = (props) => {
     const [userId, setUserId] = useState("");
     const [isSubscribed, setIsSubscribed] = useState(false)
     const [userEmail, setUserEmail] = useState("")
+    const [onboardingStep, setOnboardingStep] = useState(0)
     const [isComplete, setIsComplete] = useState(false);
     const classes = useStyles();
-    const value = { userId, setUserId, isSubscribed, setIsSubscribed, userEmail, setUserEmail };
+    const value = { userId, setUserId, isSubscribed, setIsSubscribed, userEmail, setUserEmail, onboardingStep, setOnboardingStep };
     useEffect(() => {
         let status;
         fetch("/getcookie", {
@@ -42,6 +43,7 @@ export const UserContextProvider = (props) => {
                 if (status === 200 && res.success === true) {
                     setIsComplete(true)
                     setIsSubscribed(res.isSubscribed)
+                    setOnboardingStep(res.onboardingStep)
                     setUserEmail(res.userEmail)
                     return setUserId(res.userId);
                 }
@@ -51,6 +53,7 @@ export const UserContextProvider = (props) => {
                 setIsComplete(true)
                 setUserId("")
                 setUserEmail("")
+                setOnboardingStep(0)
                 setIsSubscribed(false)
             });
     },[]);

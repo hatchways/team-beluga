@@ -39,6 +39,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
                 user.setUserId("");
                 user.setIsSubscribed(false)
                 user.setUserEmail("")
+                user.setOnboardingStep(0)
                 return setLogin(false)
             });
     }, [])
@@ -55,7 +56,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
 
     if (login === null) return (
         <Route {...rest} component={Loading} />
-    );
+    )
     return (
         <Route {...rest} render={props => (
             login ? <Component {...props} /> : <Redirect to="/login" />

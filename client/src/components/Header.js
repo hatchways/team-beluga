@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
 import logo from "../images/logo.png"
 import {AlertContext} from '../globals/AlertContext'; 
+import {UserContext} from '../globals/UserContext'; 
 
 
 // TODO: Add correct links, load profile pic/username, fix popup menu, make responsive
@@ -50,6 +51,7 @@ function Header() {
   const open = Boolean(anchorEl);
   const history = useHistory();
   const alertContext = useContext(AlertContext)
+  const userContext = useContext(UserContext)
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -79,6 +81,9 @@ function Header() {
             type:"success"
             })   
           setAnchorEl(null)
+          userContext.setUserId("")
+          userContext.setIsSubscribed(false)
+          userContext.setUserEmail("")
           history.push("/login")
         }
         else if (status === 400) {

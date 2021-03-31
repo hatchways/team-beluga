@@ -1,13 +1,12 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, Redirect } from 'react-router-dom';
 import { HeadLogo, LoginComponent, GoogleLoginBtn } from '../components/LoginComponents';
-import Cookies from 'universal-cookie';
 import { UserContext } from '../globals/UserContext';
 import { AlertContext } from '../globals/AlertContext';
 
@@ -69,12 +68,6 @@ function Signup() {
     const user = useContext(UserContext);
     const alertContext = useContext(AlertContext);
 
-    useEffect(() => {
-        if (user.userId !== ""){
-            history.push("/home");
-        }
-    }, [user.userId])
-
     const responseGoogle = (response) => {
       
         let status;
@@ -101,7 +94,7 @@ function Signup() {
                     user.setUserId(res.id);
                     user.setIsSubscribed(false)
                     user.setUserEmail(res.userEmail)
-                    history.push("/onboarding/profile-settings");
+                    user.setOnboardingStep(0)
                 } else {
                     if (status === 401) {
                         alertContext.setAlertStatus({
@@ -130,8 +123,19 @@ function Signup() {
             });
     }
 
+    const redirectOnSignUp = ()=> {
+
+        if (user.userId !== "") {
+            if (user.onboardingStep === 1)
+                return <Redirect to="/onboarding/profile-settings"/> 
+
+            return <Redirect to="/home"/> 
+        }
+    }
+
     return (
         <Grid container direction="column" alignItems="center">
+            {redirectOnSignUp()}
             <HeadLogo />
             {confirmed === false && (
                 <Grid item className={classes.shadowCard}>

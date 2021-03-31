@@ -17,7 +17,24 @@ def getcookie():
     if Users.query.filter_by(id=user_id).first() is None:
         return jsonify({'success': False, 'msg': 'Invalid Token'})
     
-    user_email = Users.query.filter_by(id=user_id).first().email
+    user = Users.query.filter_by(id=user_id).first()
+    user_email = user.email
+    
+    # Default 0 means onboarding finished
+    onboarding_step = 0
+
+    # If user url or timezone is empty set step to 1
+    if (user.url == "" or user.timezone == ""):
+        onboarding_step = 1
+    # If availablilites are empty set step to 3
+    elif (user.available_day == "" or user.available_time == ""):
+        onboarding_step = 3
+
+
     # Check subscription status
     isSubscribed,subscription = check_subscription(user_email)
-    return jsonify({'success': True, 'userId': user_id, 'isSubscribed':isSubscribed,'userEmail':user_email})
+    return jsonify({'success': True, 
+                    'userId': user_id, 
+                    'isSubscribed':isSubscribed,
+                    'userEmail':user_email,
+                    'onboardingStep':onboarding_step})
