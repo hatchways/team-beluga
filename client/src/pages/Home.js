@@ -8,6 +8,7 @@ import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import EventTypesTab from '../components/EventTypesTab'
 import Header from "../components/Header";
+import ScheduledEventTab from "../components/ScheduledEventsTab";
 
 // TODO: Insert event,appointment components, make responsive
 
@@ -103,7 +104,7 @@ function Home(props) {
             <EventTypesTab />
         </TabPanel>
         <TabPanel value={value} index={1}>
-            Appointment page
+            <ScheduledEventTab />
         </TabPanel>
     </div>
   );
