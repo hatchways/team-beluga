@@ -250,14 +250,20 @@ export default function CalendarPage(props) {
                 return
             };
         });
+        if (moment(selectedDay).format("YYYY-DDD") === moment(new Date()).format("YYYY-DDD")){  
+            let currentTime = moment(moment(new Date()).format("HH:mm"), "HH:mm")
+            let listTime = moment(moment(time, "HH:mm").format("HH:mm"), "HH:mm")
+            if (listTime.isBefore(currentTime)){
+                timeExclude.push(time)
+            }
+        }
         if (!timeRendered.includes(time) && !timeExclude.includes(time)) {
             timeRendered.push(time);
             return (
-                <Grid className={classes.timeBtnContainer}>
+                <Grid className={classes.timeBtnContainer} key={dateTime}>
                     <Button variant="outlined"
                         className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""}`}
-                        onClick={handleClickTime}
-                        key={dateTime} id={time.replace(/:/, "-")}
+                        onClick={handleClickTime} id={time.replace(/:/, "-")}
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
