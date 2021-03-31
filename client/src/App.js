@@ -25,7 +25,7 @@ function App() {
             <FlashAlert />
             <Route path="/login" component={Login} />
             <Route path="/signup" component={SignUp} />
-            <Route path="/calendar" component={CalendarPage} />
+            <Route path="/calendar/:eventUrl" component={CalendarPage} />
             <PrivateRoute exact path={["/", "/home", "/home/:page"]} component={Home} />
             <PrivateRoute exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
             <PrivateRoute exact path="/upgrade" component={Upgrade} />

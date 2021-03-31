@@ -147,7 +147,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function CalendarPage() {
+export default function CalendarPage(props) {
     const classes = useStyles();
     const [minDate, setMinDate] = useState(new Date());
     const [currentMonth, setCurrentMonth] = useState(''); //date of the first day of the month
@@ -155,9 +155,9 @@ export default function CalendarPage() {
     const [timePeriods, setTimePeriods] = useState([]);
     const [selectedDay, setSelectedDay] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
+    const [url, setUrl] = useState(props.match.params.eventUrl);
 
     const alertContext = useContext(AlertContext);
-    const user = useContext(UserContext);
 
     const handleClickDay = (day) => {
         if (selectedDay !== "" && new Date(day).getMonth() !== new Date(selectedDay).getMonth()) {
@@ -187,10 +187,8 @@ export default function CalendarPage() {
     };
     
     useEffect(() => {
-        // const userId = user.userId;
-        let userId = 1;
         let status;
-        fetch(`/availability/${userId}?ym=${currentMonth}`, {
+        fetch(`/availability/${url}?ym=${currentMonth}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -231,7 +229,8 @@ export default function CalendarPage() {
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime} />
+                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime}
+                    url={url} />
                 </Grid>
             );
         };
@@ -262,7 +261,8 @@ export default function CalendarPage() {
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime} />
+                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime}
+                    url={url} />
                 </Grid>
             )
         }

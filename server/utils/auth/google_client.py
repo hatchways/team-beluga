@@ -119,5 +119,8 @@ class GoogleClient:
         }
 
         event_service = build('calendar', 'v3', credentials=self.credentials)
-        event = event_service.events().insert(calendarId='primary', body=event).execute()
+        event = event_service.events().insert(calendarId='primary', body=event, sendUpdates='all').execute()
+        if event.get('id') is None:
+            return None
+        return event['id']
         # print('Event created: %s' % (event.get('htmlLink')))

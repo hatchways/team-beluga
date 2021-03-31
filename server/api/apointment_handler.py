@@ -11,7 +11,6 @@ appointment_handler = Blueprint('appointment_handler', __name__)
 
 
 @appointment_handler.route('/appointment/create', methods=['POST'])
-#@check_token
 def create_appointment():
     data = json.loads(request.get_data())
     name = data.get('name')
@@ -43,7 +42,7 @@ def create_appointment():
 
     google_client = GoogleClient(access_token=user.access_token, refresh_token=user.refresh_token)
     try:
-        google_client.create_event_type(
+        event_id = google_client.create_event_type(
             duration=duration,
             title=title,
             start_time=time,
@@ -54,12 +53,16 @@ def create_appointment():
         print(e)
         return jsonify({'success': False, 'msg': 'Appointment Failed to Book'}), 400
 
+    if event_id is None:
+        return jsonify({'success': False, 'msg': 'Appointment Failed to Book'}), 400
+
     appointment = Appointments(
         eventType_id=eventType_id,
         name=name,
         email=email,
         time=time,
         timezone=timezone
+        # TODO add <event_id=event_id> here later
     )
     db.session.add(appointment)
     try:
