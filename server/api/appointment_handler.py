@@ -78,31 +78,39 @@ def get_appointment(uid):
         .filter(EventTypes.user_id == uid).all()
     return jsonify([appointments.to_dict() for appointments in all_appointments])
 
-@appointment_handler.route('/appointment/<int:id>', methods=['DELETE'])
-@check_token
-def delete_appointment(id):
+
+def delete_one_appointment(user, appointment_id):
     try:
-        user = Users.query.get(int(request.get_json().get("user_id")))
-        appointment_to_delete = Appointments.query.get(id)
+        appointment_to_delete = Appointments.query.filter_by(google_event_id=appointment_id).first()
 
         if appointment_to_delete is None:
             raise Exception("Appointment to delete not found")
-        
+
         google_client = GoogleClient(access_token=user.access_token, refresh_token=user.refresh_token)
         google_client.delete_calendar_event(appointment_to_delete.google_event_id)
 
-        db.session.delete(appointment_to_delete)   
+        db.session.delete(appointment_to_delete)
         db.session.commit()
 
-        return jsonify({
-            "success":True,
-            "response":"Appointment deleted"
-        }) 
+        return True
     except Exception as e:
-        return jsonify({
-            "success":False,
-            "response":e
-        })
+        return False
 
 
-
+@appointment_handler.route('/appointment/<int:uid>', methods=['DELETE'])
+@check_token
+def delete_appointment(uid):
+    user = Users.query.filter_by(id=uid).first()
+    appointment_ids = request.get_json().get("ids")
+    if appointment_ids is None or appointment_ids == []:
+        return jsonify({'success': False, 'msg': 'Missing Field(s)'}), 400
+    for appointment_id in appointment_ids:
+        deleted = delete_one_appointment(user, appointment_id)
+        if not deleted:
+            return jsonify({'success': False, 'msg': 'Error in Deleting'}), 400
+    all_appointments = db.session.query(Appointments).join(EventTypes) \
+        .filter(EventTypes.user_id == uid).all()
+    return jsonify({'success': True,
+                    'msg': 'Successfully Deleted',
+                    'appointments': [appointments.to_dict() for appointments in all_appointments]
+                    }), 200
