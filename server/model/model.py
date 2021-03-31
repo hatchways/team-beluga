@@ -42,7 +42,7 @@ class EventTypes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     title = db.Column(db.String(64), nullable=False)
-    url = db.Column(db.String(64), nullable=False)
+    url = db.Column(db.String(64), nullable=False, unique=True)
     duration = db.Column(db.Integer, nullable=False)
     color = db.Column(db.String(64))
     appointment = db.relationship('Appointments', backref='eventType')
@@ -70,13 +70,15 @@ class Appointments(db.Model):
     email = db.Column(db.String(64), nullable=False)
     time = db.Column(db.DateTime, nullable=False)
     timezone = db.Column(db.String(64), nullable=False)
+    google_event_id = db.Column(db.String(64), nullable=False)
 
-    def __init__(self, eventType_id, name, email, time, timezone):
+    def __init__(self, eventType_id, name, email, time, timezone,google_event_id):
         self.eventType_id = eventType_id
         self.name = name
         self.email = email
         self.time = time
         self.timezone = timezone
+        self.google_event_id = google_event_id
 
     def __repr__(self):
         return f"Appointment - id:{self.id}, eventType_id:{self.eventType_id}, " \

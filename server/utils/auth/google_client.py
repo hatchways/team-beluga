@@ -120,4 +120,14 @@ class GoogleClient:
 
         event_service = build('calendar', 'v3', credentials=self.credentials)
         event = event_service.events().insert(calendarId='primary', body=event).execute()
+        return event.get("id")
         # print('Event created: %s' % (event.get('htmlLink')))
+    
+    def delete_calendar_event(self,google_event_id):
+        try:
+            service = build('calendar', 'v3', credentials=self.credentials)
+            service.events().delete(calendarId='primary', eventId='eventId').execute()
+            return True
+        except Exception as e:
+            return False
+
