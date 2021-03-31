@@ -78,8 +78,8 @@ export default function EmailDialog(props) {
         let status;
         const dateString = new Date(props.selectedDay).toISOString().substring(0, 10);
         const dateTimeString = new Date(dateString + ' ' + props.selectedTime).toISOString();
-        const timezone = new Date().getTimezoneOffset(); 
-        // offset for now, can change to "America/vancouver" format depends on needs
+        // const timezone = new Date().getTimezoneOffset(); 
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
         fetch('/appointment/create', {
             method: "POST",
@@ -88,9 +88,11 @@ export default function EmailDialog(props) {
             },
             credentials: "include",
             body: JSON.stringify({
+                name: name,
                 dateTime: dateTimeString,
                 timezone: timezone,
-                email: email
+                email: email,
+                url: props.url
             })
         })
             .then(res => {

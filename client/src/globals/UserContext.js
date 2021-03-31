@@ -57,7 +57,7 @@ export const UserContextProvider = (props) => {
 
     if (!isComplete) {
         return (
-            <Grid container direction="row" justify="center" alignItem="center"
+            <Grid container direction="row" justify="center" alignItems="center"
             className={classes.loadingContainer}>
             <CircularProgress disableShrink />
         </Grid>
