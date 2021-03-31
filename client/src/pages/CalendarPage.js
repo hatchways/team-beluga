@@ -156,6 +156,7 @@ export default function CalendarPage(props) {
     const [selectedDay, setSelectedDay] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
     const [url, setUrl] = useState(props.match.params.eventUrl);
+    const [info, setInfo] = useState('');
 
     const alertContext = useContext(AlertContext);
 
@@ -203,7 +204,8 @@ export default function CalendarPage(props) {
             .then(res => {
                 if (status === 200) {
                     TimeSlots(res.dayStart, res.dayEnd);
-                    setTimePeriods(res.busy)
+                    setTimePeriods(res.busy);
+                    setInfo(res.info)
                 }
                 else throw Error("Failed to get calendar");
             })
@@ -272,17 +274,22 @@ export default function CalendarPage(props) {
                 </Grid>
             )
         }
-    })
+    });
+
+    const TimeZone = () => {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone
+    }
+
     return (
         <Grid container className={classes.body} >
             <Grid item sm className={classes.colLeft}>
                 <Typography variant="subtitle1" className={classes.name}>
-                    John Doe
+                    {info.name}
                 </Typography>
-                <Typography variant="h5">60 minute meeting</Typography>
+                <Typography variant="h5">{info.title}</Typography>
                 <Grid item className={classes.minsLine}>
                     <AccessTimeIcon className={classes.iconMins} />
-                    <Typography variant="subtitle2" className={classes.mins}>&nbsp;60 min</Typography>
+                    <Typography variant="subtitle2" className={classes.mins}>&nbsp;{info.duration} min</Typography>
                 </Grid>
             </Grid>
             <Hidden smDown>
@@ -299,11 +306,10 @@ export default function CalendarPage(props) {
                         <CalendarWidget minDate={minDate} handleClickDay={handleClickDay}
                             selectedDay={selectedDay} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
-                            Coordinated Universal Time&nbsp;
+                            Local Timezone:&nbsp;
                             </Typography>
                         <Typography variant="caption" color="textSecondary" className={classes.calendarFooter}>
-                            (0:00)
-                                <ArrowDropDownIcon className={classes.arrowDownIcon} />
+                            {TimeZone()}
                         </Typography>
                     </Grid>
                     <Grid item md={4} className={classes.colRight}>

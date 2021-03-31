@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
@@ -72,7 +72,9 @@ function Home(props) {
     appointment:1
   }
 
-  const [value, setValue] = React.useState(typeof pageToIndex[page] === "undefined" ? 0:pageToIndex[page]);
+  const [value, setValue] = useState(typeof pageToIndex[page] === "undefined" ? 0:pageToIndex[page]);
+  const [userUrl, setUserUrl] = useState('');
+  const [name, setName] = useState('');
 
   const handleChange = (event, newValue) => {
     history.push(`/home/${indexToPage[newValue]}`)
@@ -81,7 +83,7 @@ function Home(props) {
 
   return (
     <div>
-        <Header/>
+        <Header name={name} />
         <Grid container className={classes.dashboard}>
             <Grid item xs={12} className={classes.title} >
                 <Typography variant="h5">My CalendApp</Typography>
@@ -101,7 +103,7 @@ function Home(props) {
         </Grid>
 
         <TabPanel value={value} index={0}>
-            <EventTypesTab />
+            <EventTypesTab name={name} setName={setName} userUrl={userUrl} setUserUrl={setUserUrl} />
         </TabPanel>
         <TabPanel value={value} index={1}>
             <ScheduledEventTab />
