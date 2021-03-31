@@ -44,7 +44,7 @@ const navLinks = [
   { id:3, title: 'Upgrade account', path: '/Upgrade' },
 ]
 
-function Header() {
+function Header(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -129,7 +129,7 @@ return (
             </Grid>
 
             <Grid item className={classes.name}>
-              <Typography variant="h6">John Doe</Typography>
+              <Typography variant="h6">{props.name}</Typography>
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}

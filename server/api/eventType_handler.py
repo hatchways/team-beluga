@@ -52,12 +52,19 @@ def create_eventType():
 
     return jsonify({"success":True,"response":"Event type succesfully created!"})
 
-@eventType_handler.route('/',methods=["GET"])
+@eventType_handler.route('/<int:id>',methods=["GET"])
 @check_token
-def get_eventType():
+def get_eventType(id):
+    user = Users.query.filter_by(id=id).first()
+    user_url = user.url
+    name = user.name
     all_eventTypes = EventTypes.query.all()
 
-    return jsonify([eventTypes.to_dict() for eventTypes in all_eventTypes])
+    return jsonify({
+        'url': user_url,
+        'name': name,
+        'eventTypes': [eventTypes.to_dict() for eventTypes in all_eventTypes]
+    })
 
 @eventType_handler.route('/<int:id>',methods=["PUT"])
 @check_token
