@@ -17,6 +17,12 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import { AlertContext } from '../globals/AlertContext';
 import { UserContext } from '../globals/UserContext';
 
@@ -131,32 +137,55 @@ const useToolbarStyles = makeStyles((theme) => ({
 
 const EnhancedTableToolbar = (props) => {
     const classes = useToolbarStyles();
-    const { numSelected } = props;
+    const { numSelected, open, handleClickOpen, handleClose, handleDelete } = props;
 
     return (
-        <Toolbar
-            className={clsx(classes.root, {
-                [classes.highlight]: numSelected > 0,
-            })}
-        >
-            {numSelected > 0 ? (
-                <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
-                    {numSelected} selected
-                </Typography>
-            ) : (
-                <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
-                    Events
-                </Typography>
-            )}
+        <>
+            <Toolbar
+                className={clsx(classes.root, {
+                    [classes.highlight]: numSelected > 0,
+                })}
+            >
+                {numSelected > 0 ? (
+                    <Typography className={classes.title} color="inherit" variant="subtitle1" component="div">
+                        {numSelected} selected
+                    </Typography>
+                ) : (
+                    <Typography className={classes.title} variant="h6" id="tableTitle" component="div">
+                        Events
+                    </Typography>
+                )}
 
-            {numSelected > 0 && (
-                <Tooltip title="Delete">
-                    <IconButton aria-label="delete" onClick={props.handleDelete}>
-                        <DeleteIcon />
-                    </IconButton>
-                </Tooltip>
-            )}
-        </Toolbar>
+                {numSelected > 0 && (
+                    <Tooltip title="Delete">
+                        <IconButton aria-label="delete" onClick={handleClickOpen}>
+                            <DeleteIcon />
+                        </IconButton>
+                    </Tooltip>
+                )}
+            </Toolbar>
+            <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"Are You Sure to Delete"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Appointment can not be retrieved once been deleted
+                            </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleClose} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleDelete} color="primary" autoFocus>
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 
@@ -202,6 +231,15 @@ export default function EnhancedTable() {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [appointments, setAppointments] = useState([]);
+    const [open, setOpen] = useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     useEffect(() => {
         let status;
@@ -230,19 +268,18 @@ export default function EnhancedTable() {
             });
     }, [])
 
-    const rows = appointments.map((appointment) => { 
-        return(
+    const rows = appointments.map((appointment) => {
+        return (
             createData(
                 appointment.google_event_id,
-                appointment.name, 
-                appointment.email, 
+                appointment.name,
+                appointment.email,
                 new Date(appointment.time).toString()
             )
         )
     })
 
     const handleDelete = () => {
-        console.log(selected);
         let status;
         fetch(`/appointment/${user.userId}`, {
             method: "DELETE",
@@ -277,6 +314,7 @@ export default function EnhancedTable() {
                     type: "error"
                 })
             });
+        setOpen(false)
     };
 
     const handleRequestSort = (event, property) => {
@@ -330,7 +368,10 @@ export default function EnhancedTable() {
     return (
         <div className={classes.root}>
             <Paper className={classes.paper}>
-                <EnhancedTableToolbar numSelected={selected.length} handleDelete={handleDelete} />
+                <EnhancedTableToolbar numSelected={selected.length}
+                    open={open} handleClickOpen={handleClickOpen} handleDelete={handleDelete}
+                    handleClose={handleClose}
+                />
                 <TableContainer>
                     <Table
                         className={classes.table}
