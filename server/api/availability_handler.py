@@ -56,6 +56,7 @@ def get_calendar_availability(url):
         "dayStart": dayStart,
         "dayEnd": dayEnd,
         "abledDay": abled_day,
+        "color": event_type.color,
         "info": {
             "name": user.name,
             "title": event_type.title,

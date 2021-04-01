@@ -25,6 +25,13 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: '0px 0px 15px 0px rgba(215,214,235,1)',
         padding: 40
     },
+    colorBar: {
+        width: '90%',
+        height: 10,
+        borderRadius: 15,
+        marginTop: 10,
+        marginBottom: 10
+    },
     name: {
         color: theme.palette.muted.main
     },
@@ -158,6 +165,7 @@ export default function CalendarPage(props) {
     const [url, setUrl] = useState(props.match.params.eventUrl);
     const [info, setInfo] = useState('');
     const [abledDay, setabledDay] = useState([1,2,3,4,5,6,0]);
+    const [eventTypeColor, setEventTypeColor] = useState('#fff');
 
     const alertContext = useContext(AlertContext);
 
@@ -207,7 +215,8 @@ export default function CalendarPage(props) {
                     TimeSlots(res.dayStart, res.dayEnd);
                     setTimePeriods(res.busy);
                     setInfo(res.info);
-                    setabledDay(res.abledDay)
+                    setabledDay(res.abledDay);
+                    setEventTypeColor(res.color)
                 }
                 else throw Error("Failed to get calendar");
             })
@@ -285,6 +294,7 @@ export default function CalendarPage(props) {
     return (
         <Grid container className={classes.body} >
             <Grid item sm className={classes.colLeft}>
+                <div className={classes.colorBar} style={{backgroundColor: eventTypeColor}}></div>
                 <Typography variant="subtitle1" className={classes.name}>
                     {info.name}
                 </Typography>
