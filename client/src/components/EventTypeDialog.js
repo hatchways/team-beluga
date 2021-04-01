@@ -184,7 +184,7 @@ export default function EventTypeDialog(props) {
                             id="url"
                             label="URL"
                             type="text"
-                            InputProps={{ startAdornment: <InputAdornment position="start">calendapp.com/</InputAdornment> }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">calendapp.com/{props.userUrl}/</InputAdornment> }}
                             required
                             value={url}
                             onChange={handleUrlChange}
