@@ -56,7 +56,7 @@ export default function EventTypeDialog() {
     const [title, setTitle] = useState('');
     const [duration, setDuration] = useState('');
     const [url, setUrl] = useState('');
-    const [color, setColor] = useState('');
+    const [color, setColor] = useState('#fc6c04');
 
     const alertContext = useContext(AlertContext)
 
