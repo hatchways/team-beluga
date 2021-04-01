@@ -50,7 +50,12 @@ def create_eventType():
     db.session.add(new_eventType)
     db.session.commit()
 
-    return jsonify({"success":True,"response":"Event type succesfully created!"})
+    card_info = get_eventType(data.get("user_id")).get_json()
+
+    return jsonify({"success":True,
+                    "response":"Event type succesfully created!",
+                    "cardInfo": card_info['eventTypes']
+                    })
 
 @eventType_handler.route('/<int:id>',methods=["GET"])
 @check_token

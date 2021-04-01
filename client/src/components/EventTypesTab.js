@@ -213,7 +213,7 @@ export default function EventTypesTab(props) {
                     </Grid>
                     <Grid item sm={6} align="right"
                         className={classes.newEventBtnContainer}>
-                        <EventTypeDialog />
+                        <EventTypeDialog setCardInfo={setCardInfo} />
                     </Grid>
                 </Grid>
                 <Grid item container direction="row" justify="flex-start"

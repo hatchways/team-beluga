@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function EventTypeDialog() {
+export default function EventTypeDialog(props) {
         
     const classes = useStyles();
 
@@ -127,6 +127,7 @@ export default function EventTypeDialog() {
                             type:"success"
                         })
                         setOpen(false);
+                        props.setCardInfo(res.cardInfo)
                     }
                     else throw Error(res.response);
                 })
