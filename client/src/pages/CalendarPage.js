@@ -147,7 +147,7 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function CalendarPage() {
+export default function CalendarPage(props) {
     const classes = useStyles();
     const [minDate, setMinDate] = useState(new Date());
     const [currentMonth, setCurrentMonth] = useState(''); //date of the first day of the month
@@ -155,9 +155,10 @@ export default function CalendarPage() {
     const [timePeriods, setTimePeriods] = useState([]);
     const [selectedDay, setSelectedDay] = useState(new Date());
     const [selectedTime, setSelectedTime] = useState('');
+    const [url, setUrl] = useState(props.match.params.eventUrl);
+    const [info, setInfo] = useState('');
 
     const alertContext = useContext(AlertContext);
-    const user = useContext(UserContext);
 
     const handleClickDay = (day) => {
         if (selectedDay !== "" && new Date(day).getMonth() !== new Date(selectedDay).getMonth()) {
@@ -187,10 +188,8 @@ export default function CalendarPage() {
     };
     
     useEffect(() => {
-        // const userId = user.userId;
-        let userId = 1;
         let status;
-        fetch(`/availability/${userId}?ym=${currentMonth}`, {
+        fetch(`/availability/${url}?ym=${currentMonth}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -205,7 +204,8 @@ export default function CalendarPage() {
             .then(res => {
                 if (status === 200) {
                     TimeSlots(res.dayStart, res.dayEnd);
-                    setTimePeriods(res.busy)
+                    setTimePeriods(res.busy);
+                    setInfo(res.info)
                 }
                 else throw Error("Failed to get calendar");
             })
@@ -231,7 +231,8 @@ export default function CalendarPage() {
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime} />
+                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime}
+                    url={url} />
                 </Grid>
             );
         };
@@ -251,32 +252,44 @@ export default function CalendarPage() {
                 return
             };
         });
+        if (moment(selectedDay).format("YYYY-DDD") === moment(new Date()).format("YYYY-DDD")){  
+            let currentTime = moment(moment(new Date()).format("HH:mm"), "HH:mm")
+            let listTime = moment(moment(time, "HH:mm").format("HH:mm"), "HH:mm")
+            if (listTime.isBefore(currentTime)){
+                timeExclude.push(time)
+            }
+        }
         if (!timeRendered.includes(time) && !timeExclude.includes(time)) {
             timeRendered.push(time);
             return (
-                <Grid className={classes.timeBtnContainer}>
+                <Grid className={classes.timeBtnContainer} key={dateTime}>
                     <Button variant="outlined"
                         className={`${classes.timeBtn} ${selectedTime === time ? "time-active" : ""}`}
-                        onClick={handleClickTime}
-                        key={dateTime} id={time.replace(/:/, "-")}
+                        onClick={handleClickTime} id={time.replace(/:/, "-")}
                     >
                         <FiberManualRecordIcon className={classes.dotIcon} />&nbsp;&nbsp;{time}
                     </Button>
-                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime} />
+                    <EmailDialog selectedDay={selectedDay} selectedTime={selectedTime}
+                    url={url} />
                 </Grid>
             )
         }
-    })
+    });
+
+    const TimeZone = () => {
+        return Intl.DateTimeFormat().resolvedOptions().timeZone
+    }
+
     return (
         <Grid container className={classes.body} >
             <Grid item sm className={classes.colLeft}>
                 <Typography variant="subtitle1" className={classes.name}>
-                    John Doe
+                    {info.name}
                 </Typography>
-                <Typography variant="h5">60 minute meeting</Typography>
+                <Typography variant="h5">{info.title}</Typography>
                 <Grid item className={classes.minsLine}>
                     <AccessTimeIcon className={classes.iconMins} />
-                    <Typography variant="subtitle2" className={classes.mins}>&nbsp;60 min</Typography>
+                    <Typography variant="subtitle2" className={classes.mins}>&nbsp;{info.duration} min</Typography>
                 </Grid>
             </Grid>
             <Hidden smDown>
@@ -293,11 +306,10 @@ export default function CalendarPage() {
                         <CalendarWidget minDate={minDate} handleClickDay={handleClickDay}
                             selectedDay={selectedDay} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
-                            Coordinated Universal Time&nbsp;
+                            Local Timezone:&nbsp;
                             </Typography>
                         <Typography variant="caption" color="textSecondary" className={classes.calendarFooter}>
-                            (0:00)
-                                <ArrowDropDownIcon className={classes.arrowDownIcon} />
+                            {TimeZone()}
                         </Typography>
                     </Grid>
                     <Grid item md={4} className={classes.colRight}>

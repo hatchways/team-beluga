@@ -1,7 +1,7 @@
 from flask import jsonify, Blueprint, request
 from utils.auth.google_client import GoogleClient
 from config import db
-from model.model import Users
+from model.model import Users, EventTypes
 import datetime
 from tzlocal import get_localzone
 from utils.auth.middleware import check_token
@@ -10,10 +10,15 @@ import calendar
 
 availability_handler = Blueprint('availability_handler', __name__)
 
-@availability_handler.route("/availability/<int:id>", methods=["GET"])
+
+@availability_handler.route("/availability/<url>", methods=["GET"])
 @check_token
-def get_calendar_availability(id):
-    user = Users.query.filter_by(id=id).first()
+def get_calendar_availability(url):
+    if url is None or url == "":
+        return jsonify({'success': False, 'msg': 'Url is Empty'}), 400
+    event_type = EventTypes.query.filter_by(url=url).first()
+    user = event_type.user
+    # user = Users.query.filter_by(id=uid).first()
     dayStart = user.available_time.split(',')[0]
     dayEnd = user.available_time.split(',')[1]
 
@@ -37,9 +42,15 @@ def get_calendar_availability(id):
     timezone = get_localzone()  # TODO: Get user set timezone from DB
     
     return jsonify({
+        "success": True,
         "busy": google_client.get_user_calendar_info(timeMin=timeMin, timeMax=timeMax, timezone=timezone),
         "dayStart": dayStart,
-        "dayEnd": dayEnd
+        "dayEnd": dayEnd,
+        "info": {
+            "name": user.name,
+            "title": event_type.title,
+            "duration": event_type.duration
+        }
     }), 200
 
 

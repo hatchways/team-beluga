@@ -13,6 +13,7 @@ import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import AccessTimeOutlinedIcon from '@material-ui/icons/AccessTimeOutlined';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
 import { AlertContext } from '../globals/AlertContext';
+import { UserContext } from '../globals/UserContext';
 
 const useStyles = makeStyles((theme) => ({
     //card
@@ -91,13 +92,13 @@ const useStyles = makeStyles((theme) => ({
 
 function EventTypeCard(props) {
     const classes = useStyles();
-    const { color, duration, title, url } = props;
+    const { color, duration, title, url, userUrl } = props;
     const [link, setLink] = useState(url);
 
     const alertContext = useContext(AlertContext)
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText('calendapp.com/userurl/' + link)//need to change 'userurl' as fetched later
+        navigator.clipboard.writeText(`calendapp.com/calendar/${userUrl}/${link}`)
             .then(() => {
                 alertContext.setAlertStatus({
                     isOpen: true,
@@ -144,15 +145,18 @@ function EventTypeCard(props) {
     )
 }
 
-export default function EventTypesTab() {
+export default function EventTypesTab(props) {
     const classes = useStyles();
     const [cardInfo, setCardInfo] = useState([]);
 
-    const alertContext = useContext(AlertContext)
+    const alertContext = useContext(AlertContext);
+    const userContext = useContext(UserContext);
+    const userId = userContext.userId
+    const {name, setName, userUrl, setUserUrl} = props;
 
     useEffect(() => {
         let status;
-        fetch("/event-types/", {
+        fetch(`/event-types/${userId}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json"
@@ -165,7 +169,11 @@ export default function EventTypesTab() {
                 else throw Error("Server error");
             })
             .then(res => {
-                if (status === 200) setCardInfo(res);
+                if (status === 200) {
+                    setCardInfo(res.eventTypes);
+                    setUserUrl(res.url);
+                    setName(res.name)
+                } 
                 else throw Error("Fail to fetch data");
             })
             .catch(err => {
@@ -180,7 +188,7 @@ export default function EventTypesTab() {
         if (cardInfo !== []) return (
             cardInfo.map((card) =>
                 <EventTypeCard key={card.id} url={card.url} title={card.title}
-                    duration={card.duration} color={card.color}
+                    duration={card.duration} color={card.color} userUrl={userUrl}
                 />
             )
         )
@@ -196,10 +204,10 @@ export default function EventTypesTab() {
                         </Grid>
                         <Grid item>
                             <Typography variant="subtitle2">
-                                John Doe
+                                {name}
                             </Typography>
                             <Typography variant="subtitle2" color="textSecondary">
-                                calendapp.com/john-doe
+                                calendapp.com/{userUrl}
                             </Typography>
                         </Grid>
                     </Grid>
