@@ -58,7 +58,7 @@ def get_eventType(id):
     user = Users.query.filter_by(id=id).first()
     user_url = user.url
     name = user.name
-    all_eventTypes = EventTypes.query.all()
+    all_eventTypes = EventTypes.query.filter_by(user_id=id).all()
 
     return jsonify({
         'url': user_url,
