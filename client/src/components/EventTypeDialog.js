@@ -47,7 +47,7 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 
-export default function EventTypeDialog() {
+export default function EventTypeDialog(props) {
         
     const classes = useStyles();
 
@@ -56,7 +56,7 @@ export default function EventTypeDialog() {
     const [title, setTitle] = useState('');
     const [duration, setDuration] = useState('');
     const [url, setUrl] = useState('');
-    const [color, setColor] = useState('');
+    const [color, setColor] = useState('#fc6c04');
 
     const alertContext = useContext(AlertContext)
 
@@ -127,6 +127,7 @@ export default function EventTypeDialog() {
                             type:"success"
                         })
                         setOpen(false);
+                        props.setCardInfo(res.cardInfo)
                     }
                     else throw Error(res.response);
                 })
@@ -183,7 +184,7 @@ export default function EventTypeDialog() {
                             id="url"
                             label="URL"
                             type="text"
-                            InputProps={{ startAdornment: <InputAdornment position="start">calendapp.com/</InputAdornment> }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">calendapp.com/{props.userUrl}/</InputAdornment> }}
                             required
                             value={url}
                             onChange={handleUrlChange}
