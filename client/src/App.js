@@ -1,6 +1,6 @@
 import React from "react";
 import { MuiThemeProvider } from "@material-ui/core";
-import { BrowserRouter, Route} from "react-router-dom";
+import { BrowserRouter, Route, Switch} from "react-router-dom";
 import { theme } from "./themes/theme";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
@@ -23,12 +23,14 @@ function App() {
         <AlertContextProvider>
           <BrowserRouter>
             <FlashAlert />
-            <Route path="/login" component={Login} />
-            <Route path="/signup" component={SignUp} />
-            <Route path="/calendar/:userUrl/:eventUrl" component={CalendarPage} />
-            <PrivateRoute exact path={["/", "/home", "/home/:page"]} component={Home} />
-            <PrivateRoute exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
-            <PrivateRoute exact path="/upgrade" component={Upgrade} />
+            <Switch>
+              <Route path="/login" component={Login} />
+              <Route path="/signup" component={SignUp} />
+              <Route path="/calendar/:userUrl/:eventUrl" component={CalendarPage} />
+              <PrivateRoute exact path={["/", "/home", "/home/:page"]} component={Home} />
+              <PrivateRoute exact path={["/onboarding/profile-settings", "/onboarding/calendar-confirm", "/onboarding/availability"]} component={Onboarding} />
+              <PrivateRoute exact path="/upgrade" component={Upgrade} />
+            </Switch>            
           </BrowserRouter>
         </AlertContextProvider>
       </UserContextProvider>
