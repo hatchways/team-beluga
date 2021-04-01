@@ -50,8 +50,9 @@ const useStyles = makeStyles((theme) => ({
             fontWeight: 600
         },
         '& .react-calendar__month-view__days__day--weekend': {
-            color: theme.palette.muted.main,
-            background: 'none'
+            // color: theme.palette.muted.main,
+            // background: 'none'
+            color: 'black'
         },
         '& .react-calendar__tile--now:enabled:hover, .react-calendar__tile--now:enabled:focus':{
             background: theme.palette.primary.dark
@@ -72,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
             background: theme.palette.primary.main
         },        
         '& .react-calendar__tile:disabled': {
+            color: theme.palette.muted.main,
             background: 'none'
         },
         '& .react-calendar__navigation button[disabled]': {
@@ -84,6 +86,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function CalendarWidget(props){
     const classes = useStyles();
+    const abledDay = props.abledDay;        
     return(
         <Calendar
             locale={'en'}
@@ -93,6 +96,7 @@ export default function CalendarWidget(props){
             minDetail={'month'}
             onClickDay={props.handleClickDay}
             value={props.selectedDay}
+            tileDisabled={({activeStartDate, date, view }) => !abledDay.includes(date.getDay())}
         ></Calendar>
     )
 }

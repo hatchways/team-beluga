@@ -157,6 +157,7 @@ export default function CalendarPage(props) {
     const [selectedTime, setSelectedTime] = useState('');
     const [url, setUrl] = useState(props.match.params.eventUrl);
     const [info, setInfo] = useState('');
+    const [abledDay, setabledDay] = useState([1,2,3,4,5,6,0]);
 
     const alertContext = useContext(AlertContext);
 
@@ -205,7 +206,8 @@ export default function CalendarPage(props) {
                 if (status === 200) {
                     TimeSlots(res.dayStart, res.dayEnd);
                     setTimePeriods(res.busy);
-                    setInfo(res.info)
+                    setInfo(res.info);
+                    setabledDay(res.abledDay)
                 }
                 else throw Error("Failed to get calendar");
             })
@@ -304,7 +306,7 @@ export default function CalendarPage(props) {
                 <Grid item container direction="row">
                     <Grid item className={classes.colMid} md={8}>
                         <CalendarWidget minDate={minDate} handleClickDay={handleClickDay}
-                            selectedDay={selectedDay} />
+                            selectedDay={selectedDay} abledDay={abledDay} />
                         <Typography variant="subtitle2" className={classes.calendarFooter}>
                             Local Timezone:&nbsp;
                             </Typography>

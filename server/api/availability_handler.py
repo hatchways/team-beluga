@@ -6,6 +6,7 @@ import datetime
 from tzlocal import get_localzone
 from utils.auth.middleware import check_token
 import calendar
+import time
 
 
 availability_handler = Blueprint('availability_handler', __name__)
@@ -40,12 +41,21 @@ def get_calendar_availability(url):
 
     # Get local timezone of user
     timezone = get_localzone()  # TODO: Get user set timezone from DB
-    
+
+    available_day = user.available_day.split(',')
+    abled_day = []
+    for i in available_day:
+        num = time.strptime(i[:-1], "%A").tm_wday + 1
+        if num == 6:
+            num = 0
+        abled_day.append(num)
+
     return jsonify({
         "success": True,
         "busy": google_client.get_user_calendar_info(timeMin=timeMin, timeMax=timeMax, timezone=timezone),
         "dayStart": dayStart,
         "dayEnd": dayEnd,
+        "abledDay": abled_day,
         "info": {
             "name": user.name,
             "title": event_type.title,
