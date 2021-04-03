@@ -1,68 +1,127 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# CalendApp
 
-## Available Scripts
+## Contributors
 
-In the project directory, you can run:
+[Tony Fang](https://github.com/fangyu3) & [Josh Liu](https://github.com/bugatti12345)
 
-### `npm start`
+## About
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+A clone of [Calendly](https://calendly.com) whitch allow the logged in user set availabilities and unique links for different event types, and allow the other users book appointments with the unique links.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### Stacks/Technologies
+- Front-End: ReactJs, Material UI, React Calendar
+- Back-End: Flask, PostgreSQL
+- Sevices: Oauth, Google Calendar, Stripe, SendGrid
 
-### `npm test`
+## Features
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Login
 
-### `npm run build`
+![login](/source/demo/login.gif)
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Sign Up
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+![signup](/source/demo/signup.jpg)
+![signup](/source/demo/signup2.jpg)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Oauth
 
-### `npm run eject`
+![oauth](/source/demo/oauth.gif)
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Log Out
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![oauth](/source/demo/logout.gif)
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### On Boarding
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- Allow users to set profiles (unique url, timezone) and available dates & times
 
-## Learn More
+![oauth](/source/demo/onboarding.gif)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Create Event Type
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+![create_event](/source/demo/create_eventType.gif)
 
-### Code Splitting
+### Up Grade Account
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+- Subscribe with Stripe, remain all step in origin site (never redirect to Stripe)
 
-### Analyzing the Bundle Size
+![upgrade](/source/demo/upgrade.gif)
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+### Book Appointment
 
-### Making a Progressive Web App
+- Fully connected with Google Calendar for displaying free times and create events.
+- Calendar only show user available dates and times.
+- Notification email will be sent once appointment is booked.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+![book_meeting](/source/demo/book_meeting.gif)
 
-### Advanced Configuration
+### Appointments
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+![delete_meeting](/source/demo/delete_meeting.gif)
 
-### Deployment
+### Create Event Type
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+![create_event](/source/demo/create_eventType.gif)
 
-### `npm run build` fails to minify
+## Installation
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+- Install dependncies:
+    #### `yarn install`
+    #### `pipenv install`
+    
+- Additional Requirement:
+    #### `client_secrets.json` under `/server/util/auth/` from Google with following:
+    ```json
+    {
+        "web": {
+            "client_id": <Google Client ID>,
+            "project_id": <Google Project ID>,
+            "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+            "token_uri": "https://oauth2.googleapis.com/token",
+            "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+            "client_secret": <Google Client Secret>,
+            "redirect_uris": [
+                "http://localhost:3000"
+            ],
+            "javascript_origins": [
+                "http://localhost",
+                "http://127.0.0.1",
+                "http://localhost:8848",
+                "http://localhost:5000",
+                "http://localhost:3000"
+            ]
+        }
+    }
+    ```
+
+    #### `.evn` under root `/` with following:
+    ```
+     FLASK_ENV="development", 
+     SQLALCHEMY_DATABASE_URI=<DataBase URI for SQLAlchemy>, 
+     STRIPE_API_KEY=<Stripe api key>, 
+     GOOGLE_CLIENT_ID=<Google Client ID>, 
+     GOOGLE_CLIENT_SECRET=<Google Client Secret>, 
+     GOOGLE_TOKEN_URL="https://oauth2.googleapis.com/token", 
+     GOOGLE_API_KEY=<Google API key>
+    ```
+
+- Environmnet:
+    #### Python 3.7
+    #### yarn v1.22.10
+
+## Usage
+- ### Front-End:
+    #### in `/client`
+    #### `yarn start`
+    - Running on `localhost:3000`
+
+- ### Back-End:
+    #### in `/server`
+    #### `flask run`
+    - Running on `localhost:5000`
+
+- ### DataBase:
+    #### in `/server`
+    #### `flask db migrate`
+    #### `flask db upgrade`
