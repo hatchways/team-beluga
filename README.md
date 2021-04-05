@@ -13,6 +13,10 @@ A clone of [Calendly](https://calendly.com) whitch allow the logged in user set 
 - Back-End: Flask, PostgreSQL
 - Sevices: Oauth, Google Calendar, Stripe, SendGrid
 
+## Online Demo
+
+-   ### [LIVE DEMO](http://ec2-54-241-68-236.us-west-1.compute.amazonaws.com/)
+
 ## Features
 
 ### Login
