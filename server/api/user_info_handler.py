@@ -1,6 +1,6 @@
 from flask import jsonify, Blueprint, request
 import json
-from model.model import Users
+from model.model import Users, EventTypes, Appointments
 from config import db
 from utils.auth.middleware import check_token
 
@@ -56,6 +56,25 @@ def get_user_email(id):
     return jsonify({'success': False, 'email': ''}), 400
 
 
-
+@user_info_handler.route('/user/<int:id>/delete', methods=['DELETE'])
+@check_token
+def delete_account(id):
+    user = Users.query.filter_by(id=id).first()
+    event_types = EventTypes.query.filter_by(user_id=id).all()
+    appointments = db.session.query(Appointments).join(EventTypes).filter(EventTypes.user_id == id).all()
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        for eventType in event_types:
+            db.session.delete(eventType)
+            db.session.commit()
+        for appointment in appointments:
+            db.session.delete(appointment)
+            db.session.commit()
+    except:
+        return jsonify({'success': False, 'response': 'Failed to delete'}), 400
+    res = jsonify({'success': True, 'response': 'Successfully deleted'})
+    res.set_cookie('token', expires=0)
+    return res, 200
 
 
