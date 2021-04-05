@@ -5,9 +5,9 @@
   "dependencies": {
     "@material-ui/core": "^4.1.3",
     "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
     "@stripe/react-stripe-js": "^1.4.0",
     "@stripe/stripe-js": "^1.13.2",
-    "@material-ui/lab": "^4.0.0-alpha.57",
     "dotenv": "^8.2.0",
     "material-ui-color": "^0.4.11",
     "moment-timezone": "^0.5.33",
@@ -17,6 +17,7 @@
     "react-google-login": "^5.2.2",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.4.3",
+    "serve": "^11.3.2",
     "styled-components": "^5.2.1",
     "universal-cookie": "^4.0.4"
   },

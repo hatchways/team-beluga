@@ -98,20 +98,40 @@ function EventTypeCard(props) {
     const alertContext = useContext(AlertContext)
 
     const handleCopyLink = () => {
-        navigator.clipboard.writeText(`calendapp.com/calendar/${userUrl}/${link}`)
-            .then(() => {
-                alertContext.setAlertStatus({
-                    isOpen: true,
-                    message: "Copied: " + link,
-                    type: "info"
-                })
-            }, () => {
-                alertContext.setAlertStatus({
-                    isOpen: true,
-                    message: "Fail to copy, Please copy manually",
-                    type: "error"
-                })
-            });
+        let transfer = document.createElement('input');
+        document.body.appendChild(transfer);
+        transfer.value = `http://ec2-54-241-68-236.us-west-1.compute.amazonaws.com/calendar/${userUrl}/${link}`;
+        transfer.focus();
+        transfer.select();
+        if (!document.execCommand('copy')) {
+            alertContext.setAlertStatus({
+                isOpen: true,
+                message: "Fail to copy, Please copy manually",
+                type: "error"
+            })
+        }
+        document.execCommand('copy');
+        transfer.blur();
+        document.body.removeChild(transfer);
+        alertContext.setAlertStatus({
+            isOpen: true,
+            message: "Copied: " + link,
+            type: "info"
+        })
+        // navigator.clipboard.writeText(`calendapp.com/calendar/${userUrl}/${link}`)
+        //     .then(() => {
+        //         alertContext.setAlertStatus({
+        //             isOpen: true,
+        //             message: "Copied: " + link,
+        //             type: "info"
+        //         })
+        //     }, () => {
+        //         alertContext.setAlertStatus({
+        //             isOpen: true,
+        //             message: "Fail to copy, Please copy manually",
+        //             type: "error"
+        //         })
+        //     });
     };
     return (
         <Grid item xs={12} sm={12} md={6} lg={4}>
@@ -152,7 +172,7 @@ export default function EventTypesTab(props) {
     const alertContext = useContext(AlertContext);
     const userContext = useContext(UserContext);
     const userId = userContext.userId
-    const {name, setName, userUrl, setUserUrl} = props;
+    const { name, setName, userUrl, setUserUrl } = props;
 
     useEffect(() => {
         let status;
@@ -173,7 +193,7 @@ export default function EventTypesTab(props) {
                     setCardInfo(res.eventTypes);
                     setUserUrl(res.url);
                     setName(res.name)
-                } 
+                }
                 else throw Error("Fail to fetch data");
             })
             .catch(err => {
