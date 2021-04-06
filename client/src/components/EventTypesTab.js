@@ -10,6 +10,8 @@ import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
 import AccessTimeOutlinedIcon from '@material-ui/icons/AccessTimeOutlined';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
@@ -96,8 +98,17 @@ const useStyles = makeStyles((theme) => ({
 
 function EventTypeCard(props) {
     const classes = useStyles();
-    const { color, duration, title, url, userUrl } = props;
+    const { color, duration, title, url, userUrl, setCardInfo } = props;
     const [link, setLink] = useState(url);
+    const [anchorEl, setAnchorEl] = useState(null);
+
+    const handleSettingClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleSettingClose = () => {
+        setAnchorEl(null);
+    };
 
     const alertContext = useContext(AlertContext)
 
@@ -117,15 +128,59 @@ function EventTypeCard(props) {
                 })
             });
     };
+
+    const deleteCard = () => {
+        let status;
+        fetch(`/event-types/${link}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            credentials: "include"
+        })
+            .then(res => {
+                status = res.status;
+                if (status < 500) return res.json();
+                else throw Error("Server error");
+            })
+            .then(res => {
+                if (status === 200 && res.success) {
+                    alertContext.setAlertStatus({  
+                        isOpen:true,
+                        message:res.response,
+                        type:"success"
+                    })
+                    setAnchorEl(false);
+                    setCardInfo(res.cardInfo);
+                }
+                else throw Error(res.response);
+            })
+            .catch(err => { 
+                alertContext.setAlertStatus({
+                    isOpen:true,
+                    message:err.message,
+                    type:"error"
+                })
+            }); 
+    }  
+
     return (
         <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card className={classes.cardBody}>
                 <div className={classes.colorTag} style={{ background: color }}></div>
                 <CardHeader action={
-                    <IconButton>
+                    <IconButton onClick={handleSettingClick}>
                         <SettingsOutlinedIcon className={classes.settingIcon} />
                     </IconButton>
                 } className={classes.cardHeader} />
+                <Menu
+                    anchorEl={anchorEl}
+                    keepMounted
+                    open={Boolean(anchorEl)}
+                    onClose={handleSettingClose}
+                >
+                    <MenuItem onClick={deleteCard}>Delete</MenuItem>
+                </Menu>
                 <CardContent className={classes.cardText}>
                     <Typography variant='h6'>
                         {title}
@@ -196,11 +251,12 @@ export default function EventTypesTab(props) {
             cardInfo.map((card) =>
                 <EventTypeCard key={card.id} url={card.url} title={card.title}
                     duration={card.duration} color={card.color} userUrl={userUrl}
+                    setCardInfo={setCardInfo}
                 />
             )
         )
     }
-    // need to add useEffect of fetching user info {name, url, photo} & BE route later
+
     return (
         <div className={classes.tabBackgorund}>
             <Grid container className={classes.tabBody}>

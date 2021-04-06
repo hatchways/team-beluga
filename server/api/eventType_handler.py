@@ -94,18 +94,25 @@ def update_eventType(id):
 
     return jsonify({"success":"Event type succesfully updated!"})
 
-@eventType_handler.route('/<int:id>',methods=["DELETE"])
+@eventType_handler.route('/<url>',methods=["DELETE"])
 @check_token
-def delete_eventType(id):
-    eventType_to_delete = EventTypes.query.get(id)
+def delete_eventType(url):
+    eventType_to_delete = EventTypes.query.filter_by(url=url).first()
+    user = eventType_to_delete.user
 
     if not eventType_to_delete:
-        return jsonify({"error":f"Event type with id:{id} does not exist!"}) 
+        return jsonify({"error":f"Event type with url:{url} does not exist!"})
 
-    db.session.delete(eventType_to_delete)
-    db.session.commit()
-
-    return jsonify({"success":"Event type successfully deleted!"}) 
+    try:
+        db.session.delete(eventType_to_delete)
+        db.session.commit()
+    except:
+        jsonify({"success": False, "response": "Failed  to record"})
+    card_info = get_eventType(user.id).get_json()
+    return jsonify({"success": True,
+                    "response": "Event type successfully deleted!",
+                    "cardInfo": card_info['eventTypes']
+                    })
 
 
 
