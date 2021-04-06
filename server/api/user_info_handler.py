@@ -50,8 +50,9 @@ def update_user_info(id):
 @check_token
 def get_user_email(id):
     email = Users.query.get(id).email
+    name = Users.query.get(id).name
     if email:
-        return jsonify({'success': True, 'email': email}), 200
+        return jsonify({'success': True, 'email': email, 'name': name}), 200
     
     return jsonify({'success': False, 'email': ''}), 400
 

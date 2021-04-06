@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { Link, useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -7,6 +7,11 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Grid from '@material-ui/core/Grid';
+import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
 import logo from "../images/logo.png"
 import {AlertContext} from '../globals/AlertContext'; 
@@ -18,8 +23,10 @@ import { UserContext } from '../globals/UserContext';
 const useStyles = makeStyles((theme) => ({
 
     appbar: {
-        padding: "20px 5px 20px 50px",
-        backgroundColor: theme.bgcolor
+        //padding: "20px 5px 20px 50px",
+        backgroundColor: theme.bgcolor,
+        height: 86,
+        justifyContent: 'center'
     },
 
     links: {
@@ -36,7 +43,16 @@ const useStyles = makeStyles((theme) => ({
 
     name: {
       margin: 'auto 0'
-    }
+    },
+    drawer: {
+      '& li': {
+        minWidth: 250,
+        padding: '15px 20px'
+      }
+    },
+    drawerSide: {
+      marginTop: 'auto'
+    },
 }))
 
 const navLinks = [
@@ -47,12 +63,25 @@ const navLinks = [
 
 function Header(props) {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [navAnchorEl, setNavAnchorEL] = useState(null);
+  const [mobileView, setMobileView] = useState(false);
+  const [displayItem, setDisplayItem] = useState(false);
   const open = Boolean(anchorEl);
   const history = useHistory();
   const alertContext = useContext(AlertContext);
   const userContext = useContext(UserContext);
-  const userId = userContext.userId
+  const userId = userContext.userId;
+
+  useEffect(() => {
+    const setResponsiveness = () => {
+      return window.innerWidth < 960
+        ? setMobileView(true)
+        : setMobileView(false);
+    };
+    setResponsiveness();
+    window.addEventListener("resize", () => setResponsiveness());
+  }, []);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -148,54 +177,123 @@ function Header(props) {
     })
   }
 
+  const handleNavItemShow = (e) => {
+    setNavAnchorEL(e.currentTarget);
+    setDisplayItem(true)
+  }
 
-return (
-    <Grid container>
-      <AppBar position="static" className={classes.appbar}>
-        <Toolbar>
-          <Grid item sm={8}>
-            <img src={logo} />
-          </Grid>
+  const handleNavItemClose = () => {
+    setDisplayItem(false)
+  }
 
-          <Grid item container lg={5} justify="space-evenly" className={classes.links}>
-            {navLinks.map(({id, title, path }) => (
-                <Grid item key={id}>
-                    <Link to={path} style= {{textDecoration: 'none'}}>
-                        <Typography variant="h6" color={title==="Upgrade account"? "primary":"secondary"}>
-                            {title}
-                        </Typography>
-                    </Link>
+  const displayDesktop = () => {
+    return(
+      <Grid container>
+        <AppBar position="static" className={classes.appbar}>
+          <Toolbar>
+            <Grid item sm={4}>
+              <img src={logo} />
+            </Grid>
+            <Grid item container justify="flex-end" spacing={2} className={classes.links}>
+              {navLinks.map(({id, title, path }) => (
+                  <Grid item key={id}>
+                      <Link to={path} style= {{textDecoration: 'none'}}>
+                          <Typography variant="h6" color={title==="Upgrade account"? "primary":"secondary"}>
+                              {title}
+                          </Typography>
+                      </Link>
+                  </Grid>
+              ))}
+            </Grid>
+            <Grid item container direction="row" justify='flex-end' lg={3} md={4} spacing={0}> 
+              <Button onClick={handleMenu}>
+                <Grid item>
+                    <img src={Avatar} className={classes.avatar} />            
                 </Grid>
-            ))}
-          </Grid>
-
-          <Grid item container direction="row" lg={2} spacing={0}>
-            <Grid item>
-             <img src={Avatar} onClick={handleMenu} className={classes.avatar} />
+                <Grid item className={classes.name}>
+                  <Typography variant="h6">{props.name}</Typography>                  
+                </Grid>
+              </Button> 
             </Grid>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={logout}>Logout</MenuItem>                
+              <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>  
+            </Menu>
+          </Toolbar>
+        </AppBar>
+      </Grid>
+    )
+  } 
 
-            <Grid item className={classes.name}>
-              <Typography variant="h6">{props.name}</Typography>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                open={open}
-                onClose={handleClose}
+  const displayMobile = () => {
+    return(
+      <Grid container>
+        <AppBar position="static" className={classes.appbar}>
+          <Toolbar>
+            <Grid item xs={4}>
+              <IconButton
+                edge="start"
+                color="inherit"
+                onClick={handleNavItemShow}
+                aria-controls='menu-navitem'
+                aria-haspopup="true"
               >
-                <MenuItem onClick={logout}>Logout</MenuItem>                
-                <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>  
-              </Menu>
+                <MenuIcon />
+              </IconButton>
+            </Grid>          
+            <Grid item xs={8}>
+              <img src={logo} />
             </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
-    </Grid>
-  );
-}
+            <Drawer
+                id="menu-navitem"
+                anchorEl={navAnchorEl}
+                getContentAnchorEl={null}
+                open={displayItem}
+                onClose={handleNavItemClose}
+                className={classes.drawer}
+              >
+                <MenuItem>
+                  <img src={Avatar} onClick={handleMenu} className={classes.avatar} />
+                  <Typography variant="h6">{props.name}</Typography>
+                </MenuItem>
+                <Divider />
+                {navLinks.map(({id, title, path }) => (
+                  <MenuItem key={id}>
+                      <Link to={path} style= {{textDecoration: 'none'}}>
+                          <Typography variant="h6" color={title==="Upgrade account"? "primary":"secondary"}>
+                              {title}
+                          </Typography>
+                      </Link>
+                  </MenuItem>
+                ))}
+                <MenuItem onClick={logout} className={classes.drawerSide}>
+                  <Typography variant="body1">Logout</Typography>
+                </MenuItem>                
+                <MenuItem onClick={deleteAccount}>
+                  <Typography variant="body1">Delete Account</Typography>
+                </MenuItem>
+              </Drawer>
+          </Toolbar>
+        </AppBar>
+      </Grid>
+    )
+  }
+
+  return (
+    <>
+      {mobileView? displayMobile(): displayDesktop()}
+    </>
+    );
+  }
 
 export default Header

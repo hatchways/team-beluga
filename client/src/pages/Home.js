@@ -15,7 +15,10 @@ import ScheduledEventTab from "../components/ScheduledEventsTab";
 const useStyles = makeStyles((theme) => ({
 
     dashboard: {
-        padding: "70px 150px 0px 150px",
+        padding: "70px 0 0 126px",
+        '@media(max-width:768px)': {
+          padding: '70px 20px 0 20px'
+      }
     },
 
     title: {

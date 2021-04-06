@@ -40,7 +40,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   card: {
-    width:350
+    width:350,
+    margin: '0 auto 40px auto',
   },
 
   cardHeader_premium: {
@@ -99,7 +100,8 @@ export default function Upgrade() {
 
   const user_id = userContext.userId
 
-  const [email, setEmail] = useState()
+  const [email, setEmail] = useState();
+  const [name, setName] = useState('');
   
   const handleClickOpen = () => {
     setOpenModal(true);
@@ -125,9 +127,10 @@ export default function Upgrade() {
             else throw Error("Server error");
         })
         .then((data) => {
-            if (status === 200)
-                setEmail(data.email)
-            else throw Error("User email not set");
+            if (status === 200) {
+              setEmail(data.email);
+              setName(data.name);
+            } else throw Error("User email not set");
         })
         .catch(err => {
             alertContext.setAlertStatus({
@@ -173,7 +176,7 @@ export default function Upgrade() {
   return (
     <>
       <CssBaseline />
-      <Header />
+      <Header name={name} />
       {showModal()}
       {/* Hero unit */}
       <Container maxWidth="sm" component="main" className={classes.heroContent}>
