@@ -7,6 +7,7 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
+import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
@@ -17,6 +18,9 @@ import { UserContext } from '../globals/UserContext';
 
 const useStyles = makeStyles((theme) => ({
     //card
+    cardHeader: {
+        padding: "5px 5px 0 0"
+    },
     cardBody: {
         margin: '30px 60px 30px 0',
         '@media(max-width:960px)': {
@@ -117,8 +121,11 @@ function EventTypeCard(props) {
         <Grid item xs={12} sm={12} md={6} lg={4}>
             <Card className={classes.cardBody}>
                 <div className={classes.colorTag} style={{ background: color }}></div>
-                <CardHeader action={<SettingsOutlinedIcon
-                    className={classes.settingIcon} />} />
+                <CardHeader action={
+                    <IconButton>
+                        <SettingsOutlinedIcon className={classes.settingIcon} />
+                    </IconButton>
+                } className={classes.cardHeader} />
                 <CardContent className={classes.cardText}>
                     <Typography variant='h6'>
                         {title}
