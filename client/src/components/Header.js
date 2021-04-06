@@ -9,6 +9,7 @@ import Menu from '@material-ui/core/Menu';
 import Grid from '@material-ui/core/Grid';
 import MenuIcon from '@material-ui/icons/Menu';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
@@ -74,7 +75,7 @@ function Header(props) {
 
   useEffect(() => {
     const setResponsiveness = () => {
-      return window.innerWidth < 950
+      return window.innerWidth < 960
         ? setMobileView(true)
         : setMobileView(false);
     };
@@ -190,11 +191,10 @@ function Header(props) {
       <Grid container>
         <AppBar position="static" className={classes.appbar}>
           <Toolbar>
-            <Grid item sm={8}>
+            <Grid item sm={4}>
               <img src={logo} />
             </Grid>
-
-            <Grid item container lg={5} justify="space-evenly" className={classes.links}>
+            <Grid item container justify="flex-end" spacing={2} className={classes.links}>
               {navLinks.map(({id, title, path }) => (
                   <Grid item key={id}>
                       <Link to={path} style= {{textDecoration: 'none'}}>
@@ -205,30 +205,30 @@ function Header(props) {
                   </Grid>
               ))}
             </Grid>
-
-            <Grid item container direction="row" lg={2} spacing={0}>
-              <Grid item>
-              <img src={Avatar} onClick={handleMenu} className={classes.avatar} />
-              </Grid>
-
-              <Grid item className={classes.name}>
-                <Typography variant="h6">{props.name}</Typography>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  keepMounted
-                  open={open}
-                  onClose={handleClose}
-                >
-                  <MenuItem onClick={logout}>Logout</MenuItem>                
-                  <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>  
-                </Menu>
-              </Grid>
+            <Grid item container direction="row" justify='flex-end' lg={3} md={4} spacing={0}> 
+              <Button onClick={handleMenu}>
+                <Grid item>
+                    <img src={Avatar} className={classes.avatar} />            
+                </Grid>
+                <Grid item className={classes.name}>
+                  <Typography variant="h6">{props.name}</Typography>                  
+                </Grid>
+              </Button> 
             </Grid>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorEl}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              open={open}
+              onClose={handleClose}
+            >
+              <MenuItem onClick={logout}>Logout</MenuItem>                
+              <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>  
+            </Menu>
           </Toolbar>
         </AppBar>
       </Grid>
@@ -258,15 +258,6 @@ function Header(props) {
                 id="menu-navitem"
                 anchorEl={navAnchorEl}
                 getContentAnchorEl={null}
-                // anchorOrigin={{
-                //   vertical: 'bottom',
-                //   horizontal: 'center',
-                // }}
-                // transformOrigin={{
-                //   vertical: 'top',
-                //   horizontal: 'center',
-                // }}
-                // keepMounted
                 open={displayItem}
                 onClose={handleNavItemClose}
                 className={classes.drawer}
