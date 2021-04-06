@@ -10,6 +10,7 @@ import Grid from '@material-ui/core/Grid';
 import Avatar from '../images/7f21cd746f9cd939e52f7d98d746700660f6d580.png';
 import logo from "../images/logo.png"
 import {AlertContext} from '../globals/AlertContext'; 
+import { UserContext } from '../globals/UserContext';
 
 
 // TODO: Add correct links, load profile pic/username, fix popup menu, make responsive
@@ -49,7 +50,9 @@ function Header(props) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const history = useHistory();
-  const alertContext = useContext(AlertContext)
+  const alertContext = useContext(AlertContext);
+  const userContext = useContext(UserContext);
+  const userId = userContext.userId
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -58,6 +61,49 @@ function Header(props) {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const deleteAccount = () => {
+    let status
+    fetch(`/user/${userId}/delete`, {
+      method: "DELETE",
+      credentials: "include"
+    })
+    .then(res => {
+        status = res.status
+
+        if (status < 500) return res.json();
+        else throw Error("Server error");
+    })
+    .then(res=> {
+        if (status === 200) {
+          alertContext.setAlertStatus({
+            isOpen:true,
+            message:res.response,
+            type:"success"
+            })   
+          setAnchorEl(null)
+          history.push("/login")
+        }
+        else if (status === 400) {
+            alertContext.setAlertStatus({
+            isOpen:true,
+            message:res.response,
+            type:"error"
+            })  
+          setAnchorEl(null)
+        }
+        else 
+          throw Error("Server error");
+      })
+    .catch(err => {
+      setAnchorEl(null);
+      alertContext.setAlertStatus({
+        isOpen:true,
+        message:err.message,
+        type:"error"
+        })  
+    })
+  }
 
   const logout = () => {
     let status
@@ -142,6 +188,7 @@ return (
                 onClose={handleClose}
               >
                 <MenuItem onClick={logout}>Logout</MenuItem>                
+                <MenuItem onClick={deleteAccount}>Delete Account</MenuItem>  
               </Menu>
             </Grid>
           </Grid>
