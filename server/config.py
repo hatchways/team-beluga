@@ -26,7 +26,7 @@ STRIPE_API_KEY = getenv('STRIPE_API_KEY')
 # GOOGLE OAUTH
 GOOGLE_CLIENT_ID = getenv("GOOGLE_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = getenv("GOOGLE_CLIENT_SECRET")
-GOOGLE_REDIRECT_URL = "http://localhost:3000"
+GOOGLE_REDIRECT_URL = getenv("GOOGLE_REDIRECT_URL")
 GOOGLE_CLIENT_SCOPE = [     
                         "openid", 
                         "https://www.googleapis.com/auth/userinfo.profile", 
