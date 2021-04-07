@@ -86,14 +86,10 @@ A clone of [Calendly](https://calendly.com) whitch allow the logged in user set 
             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
             "client_secret": <Google Client Secret>,
             "redirect_uris": [
-                "http://localhost:3000"
+                <Google Redirect Urls>
             ],
             "javascript_origins": [
-                "http://localhost",
-                "http://127.0.0.1",
-                "http://localhost:8848",
-                "http://localhost:5000",
-                "http://localhost:3000"
+                <Google Accept Origin Urls>
             ]
         }
     }
@@ -108,6 +104,7 @@ A clone of [Calendly](https://calendly.com) whitch allow the logged in user set 
      GOOGLE_CLIENT_SECRET=<Google Client Secret>, 
      GOOGLE_TOKEN_URL="https://oauth2.googleapis.com/token", 
      GOOGLE_API_KEY=<Google API key>
+     GOOGLE_REDIRECT_URL=<Google Redirect Urls>
     ```
 
 - Environmnet:
