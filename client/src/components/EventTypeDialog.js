@@ -25,10 +25,6 @@ const useStyles = makeStyles((theme) => ({
         textTransform: 'none',
     },
 
-    dialog: {
-        padding: 35
-    },
-
     formControl: {
         marginTop: 20,
         marginBottom: 20
@@ -149,7 +145,7 @@ export default function EventTypeDialog(props) {
                 &nbsp;&nbsp;New event type
             </Button>
             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title"
-                className={classes.dialog}>
+                fullWidth maxWidth="sm">
                 <div className={classes.sampleColor} style={{background: color}}></div>
                 <DialogTitle id="form-dialog-title">Set New Event Type</DialogTitle>
                 <DialogContent>
