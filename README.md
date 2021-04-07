@@ -112,7 +112,7 @@ A clone of [Calendly](https://calendly.com) whitch allow the logged in user set 
 
 - Environmnet:
     #### Python 3.7
-    #### yarn v1.22.10
+    #### node v14.16.0
 
 ## Usage
 - ### Front-End:
