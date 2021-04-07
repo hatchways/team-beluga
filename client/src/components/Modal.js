@@ -20,11 +20,6 @@ const useStyles = makeStyles((theme) => ({
 
     dialogContentText: {
         marginBottom:20
-    },
-
-    dialogContent: {
-        width:600,
-        height:180
     }
 }));
 
@@ -32,12 +27,14 @@ function Modal({title,text,content,open,handleClose}) {
     const classes = useStyles()
 
     return (
-        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+        <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title"
+            fullWidth maxWidth="sm"
+        >
             <DialogActions className={classes.dialogActions}>
                 <CloseIcon color="primary" fontSize="small" onClick={handleClose}/>
             </DialogActions>
             <DialogTitle id="form-dialog-title" className={classes.dialogTitle}>{title}</DialogTitle>
-            <DialogContent className={classes.dialogContent}>
+            <DialogContent>
                 <DialogContentText className={classes.dialogContentText}>
                     <Typography variant="subtitle1" component="span">{text}</Typography>
                 </DialogContentText>

@@ -76,6 +76,9 @@ const useStyles = makeStyles((theme) => ({
         borderRadius: 30,
         marginRight: 20
     },
+    userinfo: {
+        marginBottom: 20
+    },
     newEventBtnContainer: {
         paddingRight: 60,
         '@media(max-width:960px)': {
@@ -261,7 +264,7 @@ export default function EventTypesTab(props) {
         <div className={classes.tabBackgorund}>
             <Grid container className={classes.tabBody}>
                 <Grid item container direction="row">
-                    <Grid item container direction="row" sm={6}>
+                    <Grid item container direction="row" sm={6} className={classes.userinfo}>
                         <Grid item className={classes.imgContainer}>
                             <img src={Avatar} alt="Avatar" className={classes.avatar} />
                         </Grid>
