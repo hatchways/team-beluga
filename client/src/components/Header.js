@@ -217,7 +217,7 @@ function Header(props) {
             </Grid>
             <Menu
               id="menu-appbar"
-              anchorEl={anchorEl}
+              anchorel={anchorEl}
               anchorOrigin={{
                 vertical: 'top',
                 horizontal: 'right',
@@ -256,8 +256,8 @@ function Header(props) {
             </Grid>
             <Drawer
                 id="menu-navitem"
-                anchorEl={navAnchorEl}
-                getContentAnchorEl={null}
+                anchorel={navAnchorEl}
+                getcontentanchorel={null}
                 open={displayItem}
                 onClose={handleNavItemClose}
                 className={classes.drawer}
