@@ -6,7 +6,7 @@ import 'react-calendar/dist/Calendar.css';
 const useStyles = makeStyles((theme) => ({
 
     calendar: {
-        width: 390,
+        width: '100%',
         border: 'none',
         textAlign: 'center',
         '& .react-calendar__navigation': {
