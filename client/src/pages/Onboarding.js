@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
     header:{
         boxShadow: theme.palette.shadow.bottom,
-        height:"80px"
+        minHeight: 80
     },
 
     body: {
