@@ -12,6 +12,10 @@ import { UserContext } from '../../globals/UserContext';
 import {AlertContext} from '../../globals/AlertContext';
 
 const useStyles = makeStyles((theme) => ({
+    dash: {
+        textAlign: 'center'
+    },
+
     checkBoxContainer: {
         paddingRight:"0px !important"
     },
@@ -20,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: "0px 1px 4px 0px rgb(0 0 0 / 15%)",
         margin:0,
         padding:"0px 15px 10px 15px",
+        width: 53
     },
 
     checkBoxText: {
@@ -232,13 +237,13 @@ function UserAvailability({setters}) {
                         <Typography variant="subtitle2">Available Hours:</Typography>
                     </Grid>
                     <Grid container item xs={12} alignItems="center" spacing={3}>
-                        <Grid item xs={3}> 
+                        <Grid item sm={3} xs={5}> 
                             <DropdownSelect defaultValue={startTime} handler={handleStartTimeChange} options={timeOptions}/>
                         </Grid>
                         
-                        <Grid item><Typography variant="h6">-</Typography></Grid>
+                        <Grid item xs={1}><Typography variant="h6" className={classes.dash}>&mdash;</Typography></Grid>
 
-                        <Grid item xs={3}>    
+                        <Grid item sm={3} xs={5}>    
                             <DropdownSelect defaultValue={endTime} handler={handleEndTimeChange}  options={timeOptions}/>
                         </Grid>
                     </Grid>
