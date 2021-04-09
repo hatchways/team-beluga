@@ -10,15 +10,15 @@ import CalendarConfirm from "../components/onboarding/CalendarConfirm";
 import UserAvailability from "../components/onboarding/UserAvailability";
 
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
 
     logo: {
-        margin: "100px 0px 40px 0px"
+        margin: "25px 0"
     },
 
     layout:{
         width:"700px",
-        boxShadow: "0px 0px 4px 3px rgb(0 0 0 / 15%)",
+        boxShadow: theme.palette.shadow.card,
         margin:"auto"
     },
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     },
 
     header:{
-        boxShadow: "0px 1px 4px 0px rgb(0 0 0 / 15%)",
+        boxShadow: theme.palette.shadow.bottom,
         height:"80px"
     },
 
@@ -51,7 +51,7 @@ const useStyles = makeStyles({
         textDecoration: 'none',
         color:"#ffffff",
     }
-});
+}));
 
 function ProgressMobileStepper({activeStep}) {
     const classes = useStyles();
