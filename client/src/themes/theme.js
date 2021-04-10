@@ -43,7 +43,8 @@ export const theme = createMuiTheme({
       main: "#8fbc1b"
     },
     shadow: {
-        card: "0px 0px 15px 0px rgba(215,214,235,1)"
+        card: "0px 0px 15px 0px rgba(215,214,235,1)",
+        bottom: "0px 1px 10px 0px rgba(215,214,235,1)"
     }
   },
 

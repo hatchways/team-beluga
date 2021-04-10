@@ -27,6 +27,12 @@ const useStyles = makeStyles({
     link: {
         textDecoration: 'none',
         color:"#ffffff",
+    },
+    inputLabel: {
+        margin: '15px 0'
+    },
+    timezoneInput: {
+        maxWidth: 243
     }
 });
 
@@ -122,11 +128,13 @@ function ProfileSetting({setters}) {
         <Grid container item xs={12}>
             <Grid item container xs={12} className={classes.body} direction="column" spacing={4} justify="center">
                 <Grid container item xs={12} justify="flex-start" alignItems="center">
-                    <Grid item xs={4}>
-                        <Typography variant="subtitle2">Create your CalendApp URL:</Typography>
+                    <Grid item sm={4} xs={12}>
+                        <Typography variant="subtitle2" className={classes.inputLabel}>
+                            Create your CalendApp URL:
+                        </Typography>
                     </Grid>
 
-                    <Grid item xs={8}>
+                    <Grid item sm={8} xs={12}>
                         <TextField
                             required
                             InputProps={{
@@ -145,12 +153,16 @@ function ProfileSetting({setters}) {
                 </Grid>
 
                 <Grid container item xs={12} justify="flex-start" alignItems="center">
-                    <Grid item xs={4}>
-                        <Typography variant="subtitle2">Select your timezone:</Typography>
+                    <Grid item sm={4} xs={12}>
+                        <Typography variant="subtitle2" className={classes.inputLabel}>
+                            Select your timezone:
+                        </Typography>
                     </Grid>
 
-                    <Grid item xs={5}>
-                        <DropdownSelect defaultValue={timezone} handler={handleTimezoneChange} options={timezones}></DropdownSelect>
+                    <Grid item sm={8} xs={12} className={classes.timezoneInput}>
+                        <DropdownSelect defaultValue={timezone} 
+                            handler={handleTimezoneChange} options={timezones}                            
+                        />
                     </Grid>
                 </Grid>
             </Grid>
